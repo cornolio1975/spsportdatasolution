@@ -1,0 +1,24 @@
+{
+  "name": "sp-sportdata-solution",
+  "version": "1.0.0",
+  "description": "SP SPORTDATA SOLUTION - Corporate Portal & Product Suite (KarateTech & KabaddiTech)",
+  "main": "index.html",
+  "scripts": {
+    "dev": "npx serve .",
+    "build": "echo 'Static site ready for deployment.'",
+    "deploy": "git push origin main:gh-pages"
+  },
+  "keywords": [
+    "sports-technology",
+    "karate",
+    "kabaddi",
+    "live-scoring",
+    "scoreboard"
+  ],
+  "author": "SP SPORTDATA SOLUTION",
+  "license": "ISC",
+  "devDependencies": {
+    "gh-pages": "^6.3.0",
+    "serve": "^14.2.4"
+  }
+}
