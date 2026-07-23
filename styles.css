@@ -176,7 +176,7 @@ h1, h2, h3, h4, h5, h6 {
   height: 80px;
 }
 
-/* Exact Brand Logo matching Image 2 */
+/* Exact Brand Logo Image matching user reference */
 .brand-logo {
   display: flex;
   align-items: center;
@@ -184,66 +184,18 @@ h1, h2, h3, h4, h5, h6 {
   text-decoration: none;
 }
 
-.logo-badge {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-family: var(--font-logo);
-  font-weight: 900;
-  font-size: 1.5rem;
-  letter-spacing: -1px;
-  padding: 4px 10px;
-  background: #0D0E15;
-  border-radius: 8px;
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  box-shadow: 0 0 15px rgba(229, 9, 20, 0.3);
+.brand-logo-img {
+  height: 42px;
+  width: auto;
+  object-fit: contain;
+  display: block;
+  filter: drop-shadow(0 0 10px rgba(229, 9, 20, 0.3));
+  transition: var(--transition);
 }
 
-.logo-badge .s-char {
-  color: #FFFFFF;
-  text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
-}
-
-.logo-badge .p-char {
-  color: var(--red-glow);
-  text-shadow: 0 0 12px var(--red-glow);
-  margin-left: -2px;
-}
-
-.brand-text-container {
-  display: flex;
-  flex-direction: column;
-}
-
-.brand-main-title {
-  font-family: var(--font-logo);
-  font-weight: 800;
-  font-size: 1.15rem;
-  color: #FFFFFF;
-  letter-spacing: 1px;
-  line-height: 1;
-}
-
-.brand-sub-title {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  font-family: var(--font-heading);
-  font-weight: 700;
-  font-size: 0.65rem;
-  color: var(--red-glow);
-  letter-spacing: 3px;
-  text-transform: uppercase;
-  margin-top: 3px;
-}
-
-.brand-sub-title::before,
-.brand-sub-title::after {
-  content: '';
-  display: inline-block;
-  width: 12px;
-  height: 1px;
-  background: var(--red-glow);
+.brand-logo-img:hover {
+  transform: scale(1.03);
+  filter: drop-shadow(0 0 15px rgba(255, 30, 39, 0.6));
 }
 
 /* Nav Menu */
