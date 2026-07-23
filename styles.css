@@ -368,17 +368,17 @@ h1, h2, h3, h4, h5, h6 {
   box-shadow: 0 15px 35px -10px rgba(0, 0, 0, 0.9), 0 0 20px rgba(229, 9, 20, 0.15);
 }
 
-/* Hero Section - Full Cover Background Banner */
+/* Hero Section - Professional Tech Showcase */
 .hero {
-  min-height: 95vh;
-  padding-top: 170px;
+  min-height: 90vh;
+  padding-top: 155px;
   padding-bottom: 60px;
   display: flex;
   align-items: center;
   background: 
-    linear-gradient(180deg, rgba(7, 8, 12, 0.9) 0%, rgba(7, 8, 12, 0.45) 50%, #07080C 100%),
-    linear-gradient(90deg, #07080C 0%, rgba(7, 8, 12, 0.85) 45%, rgba(7, 8, 12, 0.25) 100%),
-    url('assets/hero_banner.jpg') no-repeat center center / cover;
+    radial-gradient(circle at 80% 40%, rgba(229, 9, 20, 0.18) 0%, transparent 55%),
+    radial-gradient(circle at 20% 80%, rgba(13, 14, 21, 0.9) 0%, transparent 60%),
+    #07080C;
   position: relative;
 }
 
@@ -424,44 +424,73 @@ h1, h2, h3, h4, h5, h6 {
   margin-bottom: 40px;
 }
 
-/* Hero Visual Showcase Area - Floating Badges over Cover Background */
+/* Right Hero Visual Showcase Frame */
 .hero-visual-wrapper {
-  display: flex;
-  justify-content: flex-end;
-  align-items: center;
+  position: relative;
   width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
+.hero-visual-frame {
+  position: relative;
+  width: 100%;
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  border: 1px solid var(--border-glass);
+  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.95), 0 0 35px rgba(229, 9, 20, 0.25);
+  background: rgba(13, 14, 21, 0.8);
+}
+
+.hero-visual-frame img {
+  width: 100%;
+  height: auto;
+  object-fit: contain;
+  display: block;
+  transition: transform 0.5s ease;
+}
+
+.hero-visual-frame:hover img {
+  transform: scale(1.02);
+}
+
+/* Overlaid Floating Badge Panel on the far right edge of the frame */
 .floating-badge-panel {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 10px;
+  z-index: 10;
 }
 
 .floating-badge-item {
   display: flex;
   align-items: center;
-  gap: 12px;
-  padding: 14px 24px;
-  background: rgba(13, 14, 21, 0.85);
+  gap: 10px;
+  padding: 10px 16px;
+  background: rgba(7, 8, 12, 0.88);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
-  border: 1px solid var(--border-glass);
+  border: 1px solid rgba(255, 255, 255, 0.15);
   border-radius: var(--radius-sm);
-  font-size: 0.875rem;
+  font-size: 0.75rem;
   font-weight: 700;
   letter-spacing: 1px;
   color: #FFFFFF;
-  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.8);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.8);
   transition: var(--transition);
   white-space: nowrap;
 }
 
 .floating-badge-item:hover {
   border-color: var(--red-glow);
-  background: rgba(229, 9, 20, 0.2);
+  background: rgba(229, 9, 20, 0.25);
   color: var(--red-glow);
-  transform: translateX(-6px);
+  transform: translateX(-4px);
 }
 
 .floating-badge-icon {
