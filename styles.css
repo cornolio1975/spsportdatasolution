@@ -173,7 +173,7 @@ h1, h2, h3, h4, h5, h6 {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  height: 80px;
+  height: 95px;
 }
 
 /* Exact Brand Logo Image matching user reference */
@@ -185,17 +185,17 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .brand-logo-img {
-  height: 42px;
+  height: 64px;
   width: auto;
   object-fit: contain;
   display: block;
-  filter: drop-shadow(0 0 10px rgba(229, 9, 20, 0.3));
+  filter: drop-shadow(0 0 12px rgba(229, 9, 20, 0.4));
   transition: var(--transition);
 }
 
 .brand-logo-img:hover {
-  transform: scale(1.03);
-  filter: drop-shadow(0 0 15px rgba(255, 30, 39, 0.6));
+  transform: scale(1.04);
+  filter: drop-shadow(0 0 20px rgba(255, 30, 39, 0.7));
 }
 
 /* Nav Menu */
@@ -370,7 +370,7 @@ h1, h2, h3, h4, h5, h6 {
 /* Hero Section (Matching Reference Image 1) */
 .hero {
   min-height: 90vh;
-  padding-top: 140px;
+  padding-top: 155px;
   padding-bottom: 60px;
   display: flex;
   align-items: center;
