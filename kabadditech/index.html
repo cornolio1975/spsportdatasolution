@@ -14,10 +14,12 @@
   <header class="navbar">
     <div class="container nav-container">
       <a href="../index.html" class="brand-logo">
-        <div class="logo-icon">⚡</div>
-        <div class="brand-text">
-          SP SPORTDATA
-          <span>SOLUTION</span>
+        <div class="logo-badge">
+          <span class="s-char">S</span><span class="p-char">P</span>
+        </div>
+        <div class="brand-text-container">
+          <div class="brand-main-title">SPORTDATA</div>
+          <div class="brand-sub-title">SOLUTION</div>
         </div>
       </a>
 
@@ -26,7 +28,7 @@
       <nav class="nav-menu">
         <a href="../index.html" class="nav-link">Home</a>
         <a href="../index.html#about" class="nav-link">About Us</a>
-        <a href="../index.html#solutions" class="nav-link">Solutions</a>
+        <a href="../index.html#services" class="nav-link">Services</a>
         
         <!-- Products Dropdown -->
         <div class="nav-item-dropdown">
@@ -49,12 +51,11 @@
           </div>
         </div>
 
-        <a href="../index.html#services" class="nav-link">Services</a>
-        <a href="../index.html#support" class="nav-link">Support</a>
-        <a href="../index.html#contact" class="nav-link">Contact</a>
+        <a href="../index.html#gallery" class="nav-link">Gallery</a>
+        <a href="../index.html#contact" class="nav-link">Contact Us</a>
       </nav>
 
-      <a href="#early-access" class="btn btn-gold">Early Access</a>
+      <a href="#early-access" class="btn btn-red">Early Access</a>
     </div>
   </header>
 
@@ -63,10 +64,10 @@
     <div class="container">
       <div class="hero-grid">
         <div>
-          <div class="badge" style="background: rgba(245, 158, 11, 0.15); border-color: var(--gold-glow); color: var(--gold-glow);">
-            <span class="badge-dot" style="background: var(--gold-glow);"></span> IN ACTIVE DEVELOPMENT • COMING SOON
+          <div class="badge">
+            <span class="badge-dot"></span> IN ACTIVE DEVELOPMENT • COMING SOON
           </div>
-          <h1 class="hero-title">KabaddiTech <span class="text-gold">Arena Telemetry</span></h1>
+          <h1 class="hero-title">KabaddiTech <span class="text-red">Arena Telemetry</span></h1>
           <p class="hero-description">
             The next product in the SP SPORTDATA SOLUTION portfolio. Engineered to deliver automated 30-second raid timers, real-time touch point logging, and synchronized arena visual displays.
           </p>
@@ -74,7 +75,7 @@
           <div style="margin: 32px 0;">
             <div style="display: flex; justify-content: space-between; font-weight: 600; font-size: 0.95rem; margin-bottom: 8px;">
               <span>Development Progress</span>
-              <span class="text-gold">75% Completed</span>
+              <span class="text-red">75% Completed</span>
             </div>
             <div class="progress-bar-container">
               <div class="progress-bar-fill"></div>
@@ -82,59 +83,48 @@
           </div>
 
           <div class="hero-actions">
-            <a href="#early-access" class="btn btn-gold">Request Early Access 📩</a>
+            <a href="#early-access" class="btn btn-red">Request Early Access 📩</a>
             <a href="../karatetech/index.html" class="btn btn-outline">Explore KarateTech Live 🥋</a>
           </div>
         </div>
 
-        <div class="glass-card product-card" style="border-color: rgba(245, 158, 11, 0.3);">
-          <div class="product-badge-flag badge-flag-soon">COMING SOON</div>
-          <div class="product-icon">🤼</div>
-          <h3 class="product-title">KabaddiTech Preview</h3>
-          <p class="product-description">
-            Purpose-built telemetry system for pro-league and federation-level Kabaddi matches.
-          </p>
-          <div class="feature-list">
-            <div class="feature-item"><span class="feature-icon">✓</span> 30-Second Raid Countdown Engine</div>
-            <div class="feature-item"><span class="feature-icon">✓</span> Touch & Bonus Point Touchpads</div>
-            <div class="feature-item"><span class="feature-icon">✓</span> Super Tackle & All-Out Event Automation</div>
-            <div class="feature-item"><span class="feature-icon">✓</span> LED Scoreboard & Stream Overlay Sync</div>
-          </div>
+        <div class="hero-visual-frame">
+          <img src="../assets/kabadditech_preview.png" alt="KabaddiTech Stadium Display Console Preview">
         </div>
       </div>
     </div>
   </section>
 
   <!-- Planned Features Grid -->
-  <section class="section" style="background: rgba(15, 23, 42, 0.4);">
+  <section class="section" style="background: rgba(13, 14, 21, 0.5);">
     <div class="container">
       <div class="section-header">
         <div class="badge">Engineered Features</div>
-        <h2 class="section-title">High-Velocity Kabaddi <span class="text-gold">Scoring</span></h2>
+        <h2 class="section-title">High-Velocity Kabaddi <span class="text-red">Scoring</span></h2>
         <p class="section-subtitle">Designed to match the split-second pace of modern Kabaddi raids.</p>
       </div>
 
       <div class="grid-4">
         <div class="glass-card">
-          <div class="product-icon">⏱️</div>
+          <div class="pillar-icon" style="margin-bottom: 12px;">⏱️</div>
           <h4>30s Raid Timer</h4>
           <p class="text-muted" style="font-size: 0.9rem; margin-top: 8px;">Automated countdown timer with sound buzzer, do-or-die raid indicators, and reset controls.</p>
         </div>
 
         <div class="glass-card">
-          <div class="product-icon">🤼‍♂️</div>
+          <div class="pillar-icon" style="margin-bottom: 12px;">🤼‍♂️</div>
           <h4>Touch Point Matrix</h4>
           <p class="text-muted" style="font-size: 0.9rem; margin-top: 8px;">Instant multi-touch scoring inputs, defender revival queue automation, and bonus point logs.</p>
         </div>
 
         <div class="glass-card">
-          <div class="product-icon">🔥</div>
+          <div class="pillar-icon" style="margin-bottom: 12px;">🔥</div>
           <h4>Super Tackle Alert</h4>
           <p class="text-muted" style="font-size: 0.9rem; margin-top: 8px;">Automatic 2-point super tackle detection when 3 or fewer defenders successfully stop a raider.</p>
         </div>
 
         <div class="glass-card">
-          <div class="product-icon">📺</div>
+          <div class="pillar-icon" style="margin-bottom: 12px;">📺</div>
           <h4>Arena Display Sync</h4>
           <p class="text-muted" style="font-size: 0.9rem; margin-top: 8px;">Direct zero-latency output to stadium screens, referee table monitors, and live web feeds.</p>
         </div>
@@ -147,8 +137,8 @@
     <div class="container">
       <div class="glass-card" style="max-width: 700px; margin: 0 auto;">
         <div style="text-align: center; margin-bottom: 32px;">
-          <div class="badge" style="background: rgba(245, 158, 11, 0.15); border-color: var(--gold-glow); color: var(--gold-glow);">Join The Beta</div>
-          <h2 style="font-size: 2rem; margin: 12px 0;">Request <span class="text-gold">Early Beta Access</span></h2>
+          <div class="badge">Join The Beta</div>
+          <h2 style="font-size: 2rem; margin: 12px 0;">Request <span class="text-red">Early Beta Access</span></h2>
           <p class="text-muted">Be the first to test KabaddiTech in your arena or federation tournament.</p>
         </div>
 
@@ -173,7 +163,7 @@
             </select>
           </div>
 
-          <button type="submit" class="btn btn-gold" style="width: 100%;">Request Early Access Notification &rarr;</button>
+          <button type="submit" class="btn btn-red" style="width: 100%;">Request Early Access Notification &rarr;</button>
         </form>
       </div>
     </div>
@@ -185,10 +175,12 @@
       <div class="footer-grid">
         <div class="footer-brand">
           <a href="../index.html" class="brand-logo">
-            <div class="logo-icon">⚡</div>
-            <div class="brand-text">
-              SP SPORTDATA
-              <span>SOLUTION</span>
+            <div class="logo-badge">
+              <span class="s-char">S</span><span class="p-char">P</span>
+            </div>
+            <div class="brand-text-container">
+              <div class="brand-main-title">SPORTDATA</div>
+              <div class="brand-sub-title">SOLUTION</div>
             </div>
           </a>
           <p>KabaddiTech is an upcoming product in the SP SPORTDATA SOLUTION sports technology portfolio.</p>
