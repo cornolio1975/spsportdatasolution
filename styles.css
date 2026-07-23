@@ -384,8 +384,8 @@ h1, h2, h3, h4, h5, h6 {
 
 .hero-grid {
   display: grid;
-  grid-template-columns: 1fr 1.5fr;
-  gap: 40px;
+  grid-template-columns: 1fr 1.35fr;
+  gap: 36px;
   align-items: center;
 }
 
@@ -424,12 +424,12 @@ h1, h2, h3, h4, h5, h6 {
   margin-bottom: 40px;
 }
 
-/* Bigger Right Hero Visual Showcase Frame & Below Badges Bar */
+/* Exact Right Hero Visual Showcase Frame */
 .hero-visual-wrapper {
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
   width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .hero-visual-frame {
@@ -452,46 +452,6 @@ h1, h2, h3, h4, h5, h6 {
 
 .hero-visual-frame:hover img {
   transform: scale(1.02);
-}
-
-/* 4 Feature Badges placed directly BELOW the Hero Banner Image */
-.hero-badge-bar {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 12px;
-  width: 100%;
-}
-
-.hero-badge-item {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  padding: 12px 14px;
-  background: rgba(13, 14, 21, 0.9);
-  backdrop-filter: blur(12px);
-  border: 1px solid var(--border-glass);
-  border-radius: var(--radius-sm);
-  font-size: 0.78rem;
-  font-weight: 700;
-  letter-spacing: 0.5px;
-  color: #FFFFFF;
-  text-align: center;
-  white-space: nowrap;
-  transition: var(--transition);
-  box-shadow: var(--shadow-dark);
-}
-
-.hero-badge-item:hover {
-  border-color: var(--red-glow);
-  background: rgba(229, 9, 20, 0.2);
-  color: var(--red-glow);
-  transform: translateY(-3px);
-}
-
-.hero-badge-icon {
-  color: var(--red-glow);
-  font-size: 1rem;
 }
 
 .floating-badge-icon {
