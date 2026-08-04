@@ -10,19 +10,21 @@
 </head>
 <body>
 
-  <!-- Shared Corporate Header & Navbar (Matching Reference Image 1 & 2) -->
-  <header class="navbar">
+  <!-- Shared Corporate Header & Navbar -->
+  <header class="navbar" id="topNavbar">
     <div class="container nav-container">
-      <a href="index.html" class="brand-logo">
-        <img src="assets/logo.jpg" alt="SP SPORTDATA SOLUTION Logo" class="brand-logo-img">
+      <a href="index.html" class="brand-logo" aria-label="SP SPORTDATA SOLUTION Home">
+        <img src="assets/logo.jpg" alt="SP SPORTDATA SOLUTION Logo" class="brand-logo-img" loading="eager">
       </a>
 
-      <button class="mobile-toggle" aria-label="Toggle Navigation Menu">☰</button>
+      <button class="mobile-toggle" id="mobileToggleBtn" aria-label="Toggle Navigation Menu">☰</button>
 
-      <nav class="nav-menu">
+      <nav class="nav-menu" id="navMenu">
         <a href="#home" class="nav-link active">Home</a>
         <a href="#about" class="nav-link">About Us</a>
-        <a href="#services" class="nav-link">Services</a>
+        <a href="#tournaments" class="nav-link">Tournaments</a>
+        <a href="#statistics" class="nav-link">Live Stats</a>
+        <a href="#features" class="nav-link">Features</a>
         
         <!-- Products Dropdown -->
         <div class="nav-item-dropdown">
@@ -49,11 +51,11 @@
         <a href="#contact" class="nav-link">Contact Us</a>
       </nav>
 
-      <a href="#contact" class="btn btn-red">Get in Touch</a>
+      <a href="#contact" class="btn btn-red nav-cta">Get in Touch</a>
     </div>
   </header>
 
-  <!-- Hero Section (Matching Reference Image 1) -->
+  <!-- Hero Section -->
   <section id="home" class="hero">
     <div class="container">
       <div class="hero-grid">
@@ -68,20 +70,20 @@
             SP SportData Solution delivers innovative digital solutions for sports management, live scoring, and performance analytics. Built for accuracy. Designed for champions.
           </p>
           <div class="hero-actions">
-            <a href="#solutions" class="btn btn-red">Explore Our Solutions &rarr;</a>
+            <a href="#tournaments" class="btn btn-red">Explore Tournaments &rarr;</a>
             <a href="#products" class="btn btn-outline">Our Products 🌐</a>
           </div>
         </div>
 
-        <!-- Right Hero Visual Box (Exact User Image) -->
+        <!-- Right Hero Visual Box -->
         <div class="hero-visual-wrapper">
           <div class="hero-visual-frame">
-            <img src="assets/hero_banner.jpg" alt="SP SPORTDATA SOLUTION Sports Technology Hero Banner">
+            <img src="assets/hero_banner.jpg" alt="SP SPORTDATA SOLUTION Sports Technology Hero Banner" loading="eager">
           </div>
         </div>
       </div>
 
-      <!-- Hero Bottom 4-Pillar Feature Bar (Matching Reference Image 1) -->
+      <!-- Hero Bottom 4-Pillar Feature Bar -->
       <div class="hero-pillars-bar">
         <div class="pillar-card">
           <div class="pillar-icon">🎯</div>
@@ -131,50 +133,186 @@
 
       <div class="grid-3">
         <div class="glass-card">
-          <div class="pillar-icon" style="margin-bottom: 16px;">🎯</div>
+          <div class="pillar-icon style-mb">🎯</div>
           <h3>Real-Time Telemetry</h3>
-          <p class="text-muted" style="margin-top: 10px;">Instantaneous point registration, penalty tracking, and referee decision logging designed for rapid arena execution.</p>
+          <p class="text-muted style-mt">Instantaneous point registration, penalty tracking, and referee decision logging designed for rapid arena execution.</p>
         </div>
         <div class="glass-card">
-          <div class="pillar-icon" style="margin-bottom: 16px;">📊</div>
+          <div class="pillar-icon style-mb">📊</div>
           <h3>Tournament Operations</h3>
-          <p class="text-muted" style="margin-top: 10px;">Automated bracket generation, round robin seedings, repechage calculations, and club management dashboards.</p>
+          <p class="text-muted style-mt">Automated bracket generation, round robin seedings, repechage calculations, and club management dashboards.</p>
         </div>
         <div class="glass-card">
-          <div class="pillar-icon" style="margin-bottom: 16px;">📺</div>
+          <div class="pillar-icon style-mb">📺</div>
           <h3>Spectator Engagement</h3>
-          <p class="text-muted" style="margin-top: 10px;">High-definition scoreboards, live streaming graphic overlays, and responsive mobile spectator portals.</p>
+          <p class="text-muted style-mt">High-definition scoreboards, live streaming graphic overlays, and responsive mobile spectator portals.</p>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- Solutions Section -->
-  <section id="solutions" class="section" style="background: rgba(13, 14, 21, 0.5);">
+  <!-- Upcoming Tournaments Section (Dynamically Loaded from KarateTech DB) -->
+  <section id="tournaments" class="section section-alt">
     <div class="container">
       <div class="section-header">
-        <div class="badge">Solutions Ecosystem</div>
-        <h2 class="section-title">Precision Platform for <span class="text-red">Every Sport</span></h2>
-        <p class="section-subtitle">Discover how our technology ecosystem powers martial arts and team sports worldwide.</p>
+        <div class="badge">KarateTech Events Portal</div>
+        <h2 class="section-title">Upcoming <span class="text-red">Tournaments & Championships</span></h2>
+        <p class="section-subtitle">Loaded automatically from the KarateTech system database. Select a tournament to register.</p>
       </div>
 
-      <div class="grid-2">
-        <div class="glass-card">
-          <div class="badge">Martial Arts Suite</div>
-          <h3 style="font-size: 1.8rem; margin: 12px 0;">WKF Karate & Combat Sports</h3>
-          <p class="text-muted" style="margin-bottom: 20px;">
-            Complete digital refereeing, Senshu decision engine, category filters, and live spectator scoreboard feeds. Used by state associations and national tournaments.
-          </p>
-          <a href="karatetech/index.html" class="btn btn-outline">Explore KarateTech Platform</a>
+      <div class="grid-2" id="tournamentsGrid">
+        <!-- Dynamic Skeleton Loader -->
+        <div class="glass-card skeleton-card">
+          <div class="skeleton-box skeleton-banner"></div>
+          <div class="skeleton-box skeleton-line skeleton-title"></div>
+          <div class="skeleton-box skeleton-line"></div>
+          <div class="skeleton-box skeleton-line skeleton-short"></div>
+        </div>
+        <div class="glass-card skeleton-card">
+          <div class="skeleton-box skeleton-banner"></div>
+          <div class="skeleton-box skeleton-line skeleton-title"></div>
+          <div class="skeleton-box skeleton-line"></div>
+          <div class="skeleton-box skeleton-line skeleton-short"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Live Statistics Section (Dynamic Counters) -->
+  <section id="statistics" class="section">
+    <div class="container">
+      <div class="section-header">
+        <div class="badge">Real-Time Analytics</div>
+        <h2 class="section-title">KarateTech Live <span class="text-red">Platform Statistics</span></h2>
+        <p class="section-subtitle">Verified live figures synchronized directly from the KarateTech engine.</p>
+      </div>
+
+      <div class="grid-5" id="statsGrid">
+        <div class="glass-card stat-card">
+          <div class="stat-icon">🏆</div>
+          <div class="stat-number" id="statActiveTournaments" data-count="1">0</div>
+          <div class="stat-label">Active Tournaments</div>
         </div>
 
-        <div class="glass-card">
-          <div class="badge">Team Sports Suite</div>
-          <h3 style="font-size: 1.8rem; margin: 12px 0;">Kabaddi Arena Telemetry</h3>
-          <p class="text-muted" style="margin-bottom: 20px;">
-            Custom 30-second raider countdown timers, touch point registration, bonus point indicators, and super-tackle visual alerts for arena display walls.
-          </p>
-          <a href="kabadditech/index.html" class="btn btn-outline">Preview KabaddiTech Roadmap</a>
+        <div class="glass-card stat-card">
+          <div class="stat-icon">👥</div>
+          <div class="stat-number" id="statRegisteredAthletes" data-count="90">0</div>
+          <div class="stat-label">Registered Athletes</div>
+        </div>
+
+        <div class="glass-card stat-card">
+          <div class="stat-icon">🌍</div>
+          <div class="stat-number" id="statCountries" data-count="8">0</div>
+          <div class="stat-label">Countries</div>
+        </div>
+
+        <div class="glass-card stat-card">
+          <div class="stat-icon">📅</div>
+          <div class="stat-number" id="statUpcomingEvents" data-count="4">0</div>
+          <div class="stat-label">Upcoming Events</div>
+        </div>
+
+        <div class="glass-card stat-card">
+          <div class="stat-icon">⚔️</div>
+          <div class="stat-number" id="statLiveMatches" data-count="69">0</div>
+          <div class="stat-label">Live Matches</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- KarateTech Features Matrix (11 Modern Cards) -->
+  <section id="features" class="section section-alt">
+    <div class="container">
+      <div class="section-header">
+        <div class="badge">Platform Features</div>
+        <h2 class="section-title">KarateTech <span class="text-red">Feature Suite</span></h2>
+        <p class="section-subtitle">Enterprise-ready modules engineered for world-class tournament administration.</p>
+      </div>
+
+      <div class="grid-4">
+        <!-- 1. Tournament Management -->
+        <div class="glass-card feature-card">
+          <div class="pillar-icon">🏆</div>
+          <h4>Tournament Management</h4>
+          <p class="text-muted">Complete lifecycle management from division creation to official medal tally reports.</p>
+        </div>
+
+        <!-- 2. Athlete Registration -->
+        <div class="glass-card feature-card">
+          <div class="pillar-icon">👥</div>
+          <h4>Athlete Registration</h4>
+          <p class="text-muted">Bulk CSV imports, age/weight category validation, and automated registration tracking.</p>
+        </div>
+
+        <!-- 3. Kumite Scoring -->
+        <div class="glass-card feature-card">
+          <div class="pillar-icon">🥋</div>
+          <h4>Kumite Scoring</h4>
+          <p class="text-muted">WKF rule set execution, Senshu priority tracking, Yuko/Waza-ari/Ippon buttons, and C1/C2 penalty logs.</p>
+        </div>
+
+        <!-- 4. Kata Scoring -->
+        <div class="glass-card feature-card">
+          <div class="pillar-icon">⏱️</div>
+          <h4>Kata Scoring</h4>
+          <p class="text-muted">Multi-judge scoring consoles with automated highest/lowest score drop rules & total score calculation.</p>
+        </div>
+
+        <!-- 5. Interactive Brackets -->
+        <div class="glass-card feature-card">
+          <div class="pillar-icon">📊</div>
+          <h4>Interactive Brackets</h4>
+          <p class="text-muted">Single elimination, double elimination, repechage draws, and pool-based round-robin standings.</p>
+        </div>
+
+        <!-- 6. Tatami Scheduling -->
+        <div class="glass-card feature-card">
+          <div class="pillar-icon">📅</div>
+          <h4>Tatami Scheduling</h4>
+          <p class="text-muted">Multi-ring match queue management, bout order sequencing, and live mat assignment feeds.</p>
+        </div>
+
+        <!-- 7. Live Results -->
+        <div class="glass-card feature-card">
+          <div class="pillar-icon">📺</div>
+          <h4>Live Results</h4>
+          <p class="text-muted">Zero-latency spectator displays, web live scoreboard feeds, and LED arena screen sync.</p>
+        </div>
+
+        <!-- 8. QR Check-in -->
+        <div class="glass-card feature-card">
+          <div class="pillar-icon">📲</div>
+          <h4>QR Check-in</h4>
+          <p class="text-muted">Fast arena check-in using mobile QR badge scans for athletes, coaches, and referees.</p>
+        </div>
+
+        <!-- 9. Offline Mode -->
+        <div class="glass-card feature-card">
+          <div class="pillar-icon">⚡</div>
+          <h4>Offline Mode</h4>
+          <p class="text-muted">Local IndexedDB state preservation ensures arena scoring functions without internet connectivity.</p>
+        </div>
+
+        <!-- 10. Cloud Sync -->
+        <div class="glass-card feature-card">
+          <div class="pillar-icon">☁️</div>
+          <h4>Cloud Sync</h4>
+          <p class="text-muted">Instant cloud synchronization with Supabase infrastructure for global audience accessibility.</p>
+        </div>
+
+        <!-- 11. AI Ready -->
+        <div class="glass-card feature-card">
+          <div class="pillar-icon">🤖</div>
+          <h4>AI Ready</h4>
+          <p class="text-muted">Automated category seeding, match duration forecasting, and intelligent bout scheduling recommendations.</p>
+        </div>
+
+        <!-- Special Flagship Badge Card -->
+        <div class="glass-card feature-card feature-card-highlight">
+          <div class="pillar-icon highlight-icon">⚡</div>
+          <h4>WKF Compliant</h4>
+          <p class="text-muted">Built strictly according to official World Karate Federation tournament regulations.</p>
         </div>
       </div>
     </div>
@@ -186,7 +324,7 @@
       <div class="section-header">
         <div class="badge">Corporate Product Suite</div>
         <h2 class="section-title">Flagship & Upcoming <span class="text-red">Sports Technologies</span></h2>
-        <p class="section-subtitle">Standardized under the <code>spsportdatasolution.org</code> subpath architecture.</p>
+        <p class="section-subtitle">Standardized under the <code>spsportdatasolution.org</code> architecture.</p>
       </div>
 
       <div class="grid-2">
@@ -194,7 +332,7 @@
         <div class="glass-card product-card">
           <div class="product-badge-flag badge-flag-active">LIVE SYSTEM</div>
           <div class="product-image-box">
-            <img src="assets/karatetech_preview.png" alt="KarateTech WKF Live Scoring Console">
+            <img src="assets/karatetech_preview.png" alt="KarateTech WKF Live Scoring Console" loading="lazy">
           </div>
           <h3 class="product-title">KarateTech</h3>
           <p class="product-description">
@@ -213,7 +351,7 @@
         <div class="glass-card product-card">
           <div class="product-badge-flag badge-flag-soon">COMING SOON</div>
           <div class="product-image-box">
-            <img src="assets/kabadditech_preview.png" alt="KabaddiTech Stadium Display Console">
+            <img src="assets/kabadditech_preview.png" alt="KabaddiTech Stadium Display Console" loading="lazy">
           </div>
           <h3 class="product-title">KabaddiTech</h3>
           <p class="product-description">
@@ -225,14 +363,45 @@
             <div class="feature-item"><span class="feature-icon">✓</span> Super Tackle & All-Out Event Alerts</div>
             <div class="feature-item"><span class="feature-icon">✓</span> Live Arena Display Screen Sync</div>
           </div>
-          <a href="kabadditech/index.html" class="btn btn-outline">Request Early Access &rarr;</a>
+          <a href="kabadditech/index.html" class="btn btn-outline">Preview KabaddiTech &rarr;</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Solutions Section -->
+  <section id="solutions" class="section section-alt">
+    <div class="container">
+      <div class="section-header">
+        <div class="badge">Solutions Ecosystem</div>
+        <h2 class="section-title">Precision Platform for <span class="text-red">Every Sport</span></h2>
+        <p class="section-subtitle">Discover how our technology ecosystem powers martial arts and team sports worldwide.</p>
+      </div>
+
+      <div class="grid-2">
+        <div class="glass-card">
+          <div class="badge">Martial Arts Suite</div>
+          <h3 class="h3-title">WKF Karate & Combat Sports</h3>
+          <p class="text-muted style-mb-lg">
+            Complete digital refereeing, Senshu decision engine, category filters, and live spectator scoreboard feeds. Used by state associations and national tournaments.
+          </p>
+          <a href="karatetech/index.html" class="btn btn-outline">Explore KarateTech Platform</a>
+        </div>
+
+        <div class="glass-card">
+          <div class="badge">Team Sports Suite</div>
+          <h3 class="h3-title">Kabaddi Arena Telemetry</h3>
+          <p class="text-muted style-mb-lg">
+            Custom 30-second raider countdown timers, touch point registration, bonus point indicators, and super-tackle visual alerts for arena display walls.
+          </p>
+          <a href="kabadditech/index.html" class="btn btn-outline">Preview KabaddiTech Roadmap</a>
         </div>
       </div>
     </div>
   </section>
 
   <!-- Services Section -->
-  <section id="services" class="section" style="background: rgba(13, 14, 21, 0.5);">
+  <section id="services" class="section">
     <div class="container">
       <div class="section-header">
         <div class="badge">Services & Capabilities</div>
@@ -242,31 +411,31 @@
 
       <div class="grid-4">
         <div class="glass-card">
-          <div class="pillar-icon" style="margin-bottom: 12px;">⚙️</div>
+          <div class="pillar-icon style-mb-sm">⚙️</div>
           <h4>Custom Software</h4>
-          <p class="text-muted" style="font-size: 0.9rem; margin-top: 8px;">Tailored scoring rules and custom tournament bracket logic.</p>
+          <p class="text-muted text-sm style-mt-xs">Tailored scoring rules and custom tournament bracket logic.</p>
         </div>
         <div class="glass-card">
-          <div class="pillar-icon" style="margin-bottom: 12px;">💻</div>
+          <div class="pillar-icon style-mb-sm">💻</div>
           <h4>Hardware Sync</h4>
-          <p class="text-muted" style="font-size: 0.9rem; margin-top: 8px;">Integration with LED arena walls, wireless buzzers, and tablets.</p>
+          <p class="text-muted text-sm style-mt-xs">Integration with LED arena walls, wireless buzzers, and tablets.</p>
         </div>
         <div class="glass-card">
-          <div class="pillar-icon" style="margin-bottom: 12px;">🌐</div>
+          <div class="pillar-icon style-mb-sm">🌐</div>
           <h4>Cloud Hosting</h4>
-          <p class="text-muted" style="font-size: 0.9rem; margin-top: 8px;">Zero-latency cloud synchronization for remote spectators.</p>
+          <p class="text-muted text-sm style-mt-xs">Zero-latency cloud synchronization for remote spectators.</p>
         </div>
         <div class="glass-card">
-          <div class="pillar-icon" style="margin-bottom: 12px;">🎧</div>
+          <div class="pillar-icon style-mb-sm">🎧</div>
           <h4>On-Site Support</h4>
-          <p class="text-muted" style="font-size: 0.9rem; margin-top: 8px;">Dedicated technical specialists managing mat controls during live events.</p>
+          <p class="text-muted text-sm style-mt-xs">Dedicated technical specialists managing mat controls during live events.</p>
         </div>
       </div>
     </div>
   </section>
 
   <!-- Gallery Section -->
-  <section id="gallery" class="section">
+  <section id="gallery" class="section section-alt">
     <div class="container">
       <div class="section-header">
         <div class="badge">Visual Gallery</div>
@@ -275,44 +444,44 @@
       </div>
 
       <div class="grid-3">
-        <div class="glass-card" style="padding: 16px;">
-          <div class="product-image-box" style="height: 200px; margin-bottom: 12px;">
-            <img src="assets/hero_sports_composite.png" alt="Sports Data Technology Arena Setup">
+        <div class="glass-card style-p-md">
+          <div class="product-image-box gallery-img-box">
+            <img src="assets/hero_sports_composite.png" alt="Sports Data Technology Arena Setup" loading="lazy">
           </div>
-          <h4 style="font-size: 1.1rem; margin-bottom: 4px;">Multi-Sport Telemetry Arena</h4>
-          <p class="text-muted" style="font-size: 0.85rem;">Integrated scoreboard consoles with arena lighting sync.</p>
+          <h4 class="h4-title">Multi-Sport Telemetry Arena</h4>
+          <p class="text-muted text-xs">Integrated scoreboard consoles with arena lighting sync.</p>
         </div>
 
-        <div class="glass-card" style="padding: 16px;">
-          <div class="product-image-box" style="height: 200px; margin-bottom: 12px;">
-            <img src="assets/karatetech_preview.png" alt="KarateTech WKF kumite match score console">
+        <div class="glass-card style-p-md">
+          <div class="product-image-box gallery-img-box">
+            <img src="assets/karatetech_preview.png" alt="KarateTech WKF kumite match score console" loading="lazy">
           </div>
-          <h4 style="font-size: 1.1rem; margin-bottom: 4px;">KarateTech Kumite Scoreboard</h4>
-          <p class="text-muted" style="font-size: 0.85rem;">AKA/AO point tracking, Senshu indicators, and round timer.</p>
+          <h4 class="h4-title">KarateTech Kumite Scoreboard</h4>
+          <p class="text-muted text-xs">AKA/AO point tracking, Senshu indicators, and round timer.</p>
         </div>
 
-        <div class="glass-card" style="padding: 16px;">
-          <div class="product-image-box" style="height: 200px; margin-bottom: 12px;">
-            <img src="assets/kabadditech_preview.png" alt="KabaddiTech stadium raid timer wall">
+        <div class="glass-card style-p-md">
+          <div class="product-image-box gallery-img-box">
+            <img src="assets/kabadditech_preview.png" alt="KabaddiTech stadium raid timer wall" loading="lazy">
           </div>
-          <h4 style="font-size: 1.1rem; margin-bottom: 4px;">KabaddiTech 30s Raid Timer</h4>
-          <p class="text-muted" style="font-size: 0.85rem;">Stadium display wall feed with super tackle alert indicators.</p>
+          <h4 class="h4-title">KabaddiTech 30s Raid Timer</h4>
+          <p class="text-muted text-xs">Stadium display wall feed with super tackle alert indicators.</p>
         </div>
       </div>
     </div>
   </section>
 
   <!-- Support & Contact Section -->
-  <section id="contact" class="section" style="background: rgba(13, 14, 21, 0.5);">
+  <section id="contact" class="section">
     <div class="container">
       <div class="grid-2">
         <div>
           <div class="badge">Get In Touch</div>
-          <h2 class="section-title" style="text-align: left;">Ready to Transform Your <span class="text-red">Sports Events?</span></h2>
+          <h2 class="section-title text-left">Ready to Transform Your <span class="text-red">Sports Events?</span></h2>
           <p class="hero-description">
             Contact SP SPORTDATA SOLUTION today to discuss custom scoring setups, federation partnerships, or live tournament hosting.
           </p>
-          <div class="feature-list" style="margin-top: 24px;">
+          <div class="feature-list style-mt-lg">
             <div class="feature-item"><span class="feature-icon">✉️</span> support@spsportdatasolution.org</div>
             <div class="feature-item"><span class="feature-icon">🌐</span> spsportdatasolution.org</div>
             <div class="feature-item"><span class="feature-icon">⚡</span> 24/7 Live Event Technical Support</div>
@@ -320,7 +489,7 @@
         </div>
 
         <div class="glass-card">
-          <h3 style="margin-bottom: 20px; font-size: 1.5rem;">Send an Inquiry</h3>
+          <h3 class="style-mb-md font-lg">Send an Inquiry</h3>
           <form id="contactForm" class="contact-form">
             <div class="form-group">
               <label for="name">Your Name / Organization</label>
@@ -342,7 +511,7 @@
               <label for="message">Message / Tournament Details</label>
               <textarea id="message" class="form-control" placeholder="Describe your tournament requirements..." required></textarea>
             </div>
-            <button type="submit" class="btn btn-red" style="width: 100%;">Submit Inquiry &rarr;</button>
+            <button type="submit" class="btn btn-red width-full">Submit Inquiry &rarr;</button>
           </form>
         </div>
       </div>
@@ -354,8 +523,8 @@
     <div class="container">
       <div class="footer-grid">
         <div class="footer-brand">
-          <a href="index.html" class="brand-logo">
-            <img src="assets/logo.jpg" alt="SP SPORTDATA SOLUTION Logo" class="brand-logo-img">
+          <a href="index.html" class="brand-logo" aria-label="SP SPORTDATA SOLUTION Home Footer">
+            <img src="assets/logo.jpg" alt="SP SPORTDATA SOLUTION Logo" class="brand-logo-img" loading="lazy">
           </a>
           <p>The global benchmark in modern sports scoring technology, live telemetry, and tournament digital transformation.</p>
         </div>
@@ -372,8 +541,8 @@
           <h4 class="footer-title">Company</h4>
           <ul class="footer-links">
             <li><a href="#about">About Us</a></li>
-            <li><a href="#solutions">Solutions</a></li>
-            <li><a href="#services">Services</a></li>
+            <li><a href="#tournaments">Tournaments</a></li>
+            <li><a href="#features">Features</a></li>
             <li><a href="#gallery">Gallery</a></li>
           </ul>
         </div>
@@ -381,8 +550,8 @@
         <div>
           <h4 class="footer-title">Connect</h4>
           <ul class="footer-links">
-            <li><a href="https://karatetech.spsportdatasolution.org/livedemo/demo/" target="_blank">🥋 KarateTech Live App</a></li>
-            <li><a href="https://cornolio1975.github.io/KarateTech/" target="_blank">KarateTech GitHub Pages</a></li>
+            <li><a href="https://karatetech.spsportdatasolution.org" target="_blank" rel="noopener">🥋 KarateTech Live App</a></li>
+            <li><a href="https://karatetech.spsportdatasolution.org/login" target="_blank" rel="noopener">KarateTech Portal Login</a></li>
             <li><a href="#contact">Get in Touch</a></li>
           </ul>
         </div>
@@ -393,6 +562,146 @@
       </div>
     </div>
   </footer>
+
+  <!-- DYNAMIC TOURNAMENT REGISTRATION MODAL OVERLAY -->
+  <div class="modal-overlay" id="registrationModal" aria-hidden="true" role="dialog" aria-labelledby="modalTitle">
+    <div class="modal-container">
+      <button class="modal-close-btn" id="modalCloseBtn" aria-label="Close Registration Modal">&times;</button>
+      
+      <!-- Auto-Loaded Tournament Details Banner -->
+      <div class="modal-banner" id="modalTournamentBanner">
+        <div class="badge badge-red">Selected Tournament Details</div>
+        <h2 class="modal-tournament-title" id="regTournName">SENSHI GOJU-RYU KARATE CHAMPIONSHIP 2026</h2>
+        <div class="tournament-details-grid">
+          <div class="detail-item">
+            <span class="detail-label">Organiser</span>
+            <span class="detail-val" id="regTournOrganiser">KELAB KARATE DO SENSHI GOJU-RYU</span>
+          </div>
+          <div class="detail-item">
+            <span class="detail-label">Date & Time</span>
+            <span class="detail-val" id="regTournDateTime">06/09/2026 (08:00 AM)</span>
+          </div>
+          <div class="detail-item">
+            <span class="detail-label">Venue / Location</span>
+            <span class="detail-val" id="regTournVenue">Dewan Serbaguna MBSJ, Bandar Kinrara 5, Selangor</span>
+          </div>
+          <div class="detail-item">
+            <span class="detail-label">Contact Person</span>
+            <span class="detail-val" id="regTournContactPerson">Senshi Admin (+60 12-152 3691)</span>
+          </div>
+          <div class="detail-item">
+            <span class="detail-label">Contact Email</span>
+            <span class="detail-val" id="regTournContactEmail">karatetech.spsds@gmail.com</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Registration Form Body -->
+      <div class="modal-body">
+        <form id="tournamentRegForm" class="contact-form">
+          <!-- User Registration Information -->
+          <div class="form-section">
+            <h3 class="form-section-title">1. User / Instructor Information</h3>
+            <div class="grid-2">
+              <div class="form-group">
+                <label for="regFullName">Full Name *</label>
+                <input type="text" id="regFullName" class="form-control" placeholder="e.g. Sensei Vamathevan" required>
+              </div>
+              <div class="form-group">
+                <label for="regDojoName">Dojo / Club Name *</label>
+                <input type="text" id="regDojoName" class="form-control" placeholder="e.g. Senshi Goju-Ryu Karate Club" required>
+              </div>
+            </div>
+
+            <div class="form-group style-mt-sm">
+              <label for="regAddress">Full Address *</label>
+              <input type="text" id="regAddress" class="form-control" placeholder="No. 12, Jalan Kinrara 5, Puchong, Selangor" required>
+            </div>
+
+            <div class="grid-2 style-mt-sm">
+              <div class="form-group">
+                <label for="regPhone">Contact Number *</label>
+                <input type="tel" id="regPhone" class="form-control" placeholder="+60187776655" required>
+              </div>
+              <div class="form-group">
+                <label for="regEmail">Email Address *</label>
+                <input type="email" id="regEmail" class="form-control" placeholder="instructor@senshikarate.org" required>
+              </div>
+            </div>
+          </div>
+
+          <!-- Participant Registration Workflow -->
+          <div class="form-section style-mt-lg">
+            <div class="flex-between">
+              <h3 class="form-section-title">2. Participant Registration (CSV Upload)</h3>
+              <a href="senshi_karate_registration_template.csv" download="senshi_karate_registration_template.csv" class="btn-link">
+                📥 Download Sample CSV Template
+              </a>
+            </div>
+            
+            <p class="text-muted text-xs style-mb-sm">
+              Upload your club's CSV spreadsheet. Must include: Full Name, Gender, DOB (YYYY-MM-DD), Weight, Height, IC/Passport, and Club.
+            </p>
+
+            <div class="upload-dropzone" id="csvDropzone">
+              <input type="file" id="csvFileInput" accept=".csv" class="file-input-hidden">
+              <label for="csvFileInput" class="dropzone-label">
+                <span class="upload-icon">📁</span>
+                <span class="upload-title">Drag & drop your completed CSV file here</span>
+                <span class="upload-sub">or click to browse from device</span>
+              </label>
+            </div>
+
+            <!-- Paste Data Alternative -->
+            <div class="style-mt-sm">
+              <label for="csvPasteArea" class="label-xs">Or Paste Raw CSV Data</label>
+              <textarea id="csvPasteArea" class="form-control code-font" rows="3" placeholder="First Name&#9;Last Name&#9;Gender&#9;DOB&#9;Weight&#9;Size&#9;Passport/IC&#9;Club&#9;Email&#9;Phone"></textarea>
+              <div class="flex-between style-mt-xs">
+                <button type="button" class="btn-text" id="btnInsertSampleCsv">Insert Sample CSV Data</button>
+                <button type="button" class="btn btn-outline btn-sm" id="btnParseCsv">Parse Participants &rarr;</button>
+              </div>
+            </div>
+
+            <!-- Parsed Participants Preview Table -->
+            <div class="preview-table-wrapper style-mt-md" id="previewTableContainer" style="display: none;">
+              <div class="table-header-bar">
+                <span class="table-title">Parsed Participants List (<span id="parsedCount">0</span> athletes)</span>
+                <span class="table-badge" id="tableValidationStatus">Ready for Submission</span>
+              </div>
+              <div class="table-scroll font-xs">
+                <table class="data-table" id="participantTable">
+                  <thead>
+                    <tr>
+                      <th>#</th>
+                      <th>Full Name</th>
+                      <th>Gender</th>
+                      <th>DOB</th>
+                      <th>Weight</th>
+                      <th>Height</th>
+                      <th>IC / Passport</th>
+                      <th>Club</th>
+                      <th>Kumite</th>
+                      <th>Kata</th>
+                    </tr>
+                  </thead>
+                  <tbody id="participantTableBody">
+                    <!-- Dynamic Rows -->
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+          <!-- Action Buttons -->
+          <div class="modal-actions">
+            <button type="button" class="btn btn-outline" id="btnCancelReg">Cancel</button>
+            <button type="button" class="btn btn-outline" id="btnModifyInfo" style="display: none;">Modify Info</button>
+            <button type="submit" class="btn btn-red" id="btnSubmitReg">Send Registration &rarr;</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
 
   <script src="app.js"></script>
 </body>
