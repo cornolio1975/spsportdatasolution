@@ -15,6 +15,7 @@ function copyRecursiveSync(src, dest) {
       fs.mkdirSync(dest, { recursive: true });
     }
     fs.readdirSync(src).forEach(childItemName => {
+      if (childItemName === '.git' || childItemName === 'node_modules' || childItemName === '.next') return;
       copyRecursiveSync(path.join(src, childItemName), path.join(dest, childItemName));
     });
   } else {
@@ -34,7 +35,7 @@ function copyRecursiveSync(src, dest) {
 
 try {
   if (fs.existsSync(stageDir)) {
-    fs.rmSync(stageDir, { recursive: true, force: true });
+    fs.rmSync(stageDir, { recursive: true, force: true, maxRetries: 5, retryDelay: 200 });
   }
   fs.mkdirSync(stageDir, { recursive: true });
 
@@ -60,7 +61,7 @@ try {
   fs.copyFileSync(zipPath, karateDist);
 
   // Clean stageDir
-  fs.rmSync(stageDir, { recursive: true, force: true });
+  fs.rmSync(stageDir, { recursive: true, force: true, maxRetries: 5, retryDelay: 200 });
 
   console.log('✅ dist.zip successfully created and updated!');
 } catch (error) {

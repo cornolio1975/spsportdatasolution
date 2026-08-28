@@ -14,10 +14,14 @@ const SUPABASE_HEADERS = {
 let loadedTournaments = [];
 let currentSelectedTournament = null;
 let parsedParticipants = [];
+let hasHandledRegistrationDeepLink = false;
 
 document.addEventListener('DOMContentLoaded', () => {
   // 1. Initialize Navigation & Smooth Scroll
   initNavbar();
+
+  // 1.1 Render KarateTech visitor banner from live public tournaments feed
+  initKarateTechUpcomingBanner();
   
   // 2. Fetch Live Tournaments & Statistics from KarateTech DB
   fetchUpcomingTournaments();
@@ -94,6 +98,7 @@ async function fetchUpcomingTournaments() {
     if (Array.isArray(data) && data.length > 0) {
       loadedTournaments = data;
       renderTournamentCards(data);
+      openRegistrationFromUrlIfRequested();
     } else {
       renderFallbackTournaments();
     }
@@ -173,6 +178,7 @@ function renderFallbackTournaments() {
   ];
   loadedTournaments = fallback;
   renderTournamentCards(fallback);
+  openRegistrationFromUrlIfRequested();
 }
 
 async function fetchLiveStatistics() {
@@ -637,6 +643,114 @@ function initContactForm() {
       }
     });
   }
+}
+
+/* ==========================================================================
+   5. KARATETECH UPCOMING BANNER (PUBLIC TOURNAMENT FEED)
+   ========================================================================== */
+async function initKarateTechUpcomingBanner() {
+  const banner = document.getElementById('ktUpcomingBanner');
+  if (!banner) return;
+
+  const tournamentsPageUrl = 'https://karatetech.spsportdatasolution.org/public/tournaments/';
+  const registerNowUrl = 'https://spsportdatasolution.org/?openRegistration=1#tournaments';
+
+  const titleEl = banner.querySelector('.upcoming-banner-title');
+  const statusEl = banner.querySelector('.upcoming-banner-status');
+  const valueEls = banner.querySelectorAll('.upcoming-banner-value');
+  const actionsEl = banner.querySelector('.upcoming-banner-actions');
+
+  const setValues = ({ title, status, date, registrationClose, venue, registerUrl }) => {
+    if (titleEl) titleEl.innerText = title;
+    if (statusEl) statusEl.innerText = status;
+    if (valueEls[0]) valueEls[0].innerText = date || 'To be announced';
+    if (valueEls[1]) valueEls[1].innerText = registrationClose || 'To be announced';
+    if (valueEls[2]) valueEls[2].innerText = venue || 'Venue announcement pending';
+
+    if (actionsEl) {
+      const registerButton = `<a href="${escapeHtml(registerNowUrl)}" target="_blank" rel="noopener noreferrer" class="btn btn-red">Register Now</a>`;
+
+      actionsEl.innerHTML = `${registerButton}<a href="${tournamentsPageUrl}" target="_blank" rel="noopener noreferrer" class="btn btn-outline">View Tournaments</a>`;
+    }
+
+    banner.classList.remove('is-loading');
+  };
+
+  try {
+    const res = await fetch(tournamentsPageUrl);
+    if (!res.ok) throw new Error(`Public tournaments fetch failed: ${res.status}`);
+
+    const html = await res.text();
+    const parsedData = parsePublicTournamentHtml(html, tournamentsPageUrl);
+
+    if (!parsedData) throw new Error('No upcoming tournament found in source HTML');
+
+    setValues(parsedData);
+  } catch (error) {
+    console.warn('Upcoming banner source fetch failed, using fallback data.', error);
+    setValues({
+      title: 'SENSHI GOJU-RYU KARATE CHAMPIONSHIP 2026',
+      status: 'Live registrations available',
+      date: '06/09/2026',
+      registrationClose: 'September 1, 2026',
+      venue: 'Dewan Serbaguna MBSJ, Bandar Kinrara 5, Selangor',
+      registerUrl: tournamentsPageUrl
+    });
+  }
+}
+
+function parsePublicTournamentHtml(html, sourceUrl) {
+  if (!html) return null;
+
+  const parser = new DOMParser();
+  const doc = parser.parseFromString(html, 'text/html');
+
+  const registerAnchor = doc.querySelector('a[href*="/public/register"]');
+  const registerHref = registerAnchor?.getAttribute('href') || '';
+  const registerUrl = registerHref ? new URL(registerHref, sourceUrl).toString() : '';
+
+  const registerLabel = registerAnchor?.textContent?.trim() || '';
+  const titleFromCta = registerLabel.replace(/^Register\s+for\s+/i, '').trim();
+
+  const primaryHeading = doc.querySelector('h2')?.textContent?.trim() || '';
+  const title = titleFromCta || primaryHeading || 'Upcoming KarateTech Tournament';
+
+  const bodyText = (doc.body?.innerText || html)
+    .replace(/\s+/g, ' ')
+    .trim();
+
+  const date = (bodyText.match(/TOURNAMENT\s*DATE\s*([0-9]{2}\/[0-9]{2}\/[0-9]{4})/i) || [])[1] || '';
+  const registrationClose = (bodyText.match(/REGISTRATION\s*CLOSES\s*([A-Za-z]+\s+[0-9]{1,2},\s+[0-9]{4})/i) || [])[1] || '';
+  const venue = (bodyText.match(/VENUE\s*(.*?)\s*REGISTRATION\s*CLOSES/i) || [])[1] || '';
+  const status = (bodyText.match(/STATUS\s*([A-Za-z]+)/i) || [])[1] || '';
+
+  return {
+    title,
+    status: status ? `Status: ${status}` : 'Upcoming tournament announced',
+    date,
+    registrationClose,
+    venue,
+    registerUrl
+  };
+}
+
+function openRegistrationFromUrlIfRequested() {
+  if (hasHandledRegistrationDeepLink) return;
+
+  const params = new URLSearchParams(window.location.search);
+  const shouldOpenRegistration = params.get('openRegistration') === '1';
+  if (!shouldOpenRegistration) return;
+  if (!Array.isArray(loadedTournaments) || loadedTournaments.length === 0) return;
+
+  const requestedTournamentId = params.get('tournamentId');
+  const targetTournament = requestedTournamentId
+    ? loadedTournaments.find(t => String(t.id) === requestedTournamentId)
+    : loadedTournaments[0];
+
+  if (!targetTournament?.id) return;
+
+  hasHandledRegistrationDeepLink = true;
+  openRegistrationModal(targetTournament.id);
 }
 
 /* Helper Utilities */

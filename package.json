@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "npx serve .",
     "build": "echo 'Static site ready for deployment.'",
+    "build:hostinger": "node build-dist-zip.js",
     "deploy": "git push origin main:gh-pages"
   },
   "keywords": [

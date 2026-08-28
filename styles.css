@@ -400,6 +400,125 @@ h1, h2, h3, h4, h5, h6 {
   font-size: 0.85rem;
 }
 
+/* KarateTech Upcoming Tournament Banner */
+.section-upcoming-banner {
+  padding-top: 20px;
+}
+
+.upcoming-banner {
+  position: relative;
+  overflow: hidden;
+  border-radius: var(--radius-lg);
+  padding: 30px;
+  background:
+    linear-gradient(125deg, rgba(13, 14, 21, 0.92) 0%, rgba(34, 10, 13, 0.9) 45%, rgba(13, 14, 21, 0.95) 100%),
+    radial-gradient(circle at 88% 15%, rgba(255, 30, 39, 0.2), transparent 45%);
+  border: 1px solid rgba(255, 30, 39, 0.35);
+  box-shadow: var(--shadow-dark), inset 0 0 0 1px rgba(255, 255, 255, 0.03);
+}
+
+.upcoming-banner::before {
+  content: '';
+  position: absolute;
+  inset: -1px;
+  background: linear-gradient(90deg, transparent 0%, rgba(255, 77, 85, 0.18) 35%, transparent 70%);
+  transform: translateX(-130%);
+  animation: upcomingSweep 6s ease-in-out infinite;
+  pointer-events: none;
+}
+
+.upcoming-banner-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 10px;
+}
+
+.upcoming-banner-status {
+  color: var(--red-light);
+  font-weight: 700;
+  letter-spacing: 0.3px;
+}
+
+.upcoming-banner-title {
+  font-size: clamp(1.4rem, 3vw, 2.1rem);
+  margin-bottom: 18px;
+}
+
+.upcoming-banner-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.upcoming-banner-item {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+  padding: 14px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.upcoming-banner-item-wide {
+  grid-column: 1 / -1;
+}
+
+.upcoming-banner-label {
+  color: var(--text-muted);
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.45px;
+  text-transform: uppercase;
+}
+
+.upcoming-banner-value {
+  color: var(--text-main);
+  font-weight: 600;
+}
+
+.upcoming-banner-actions {
+  margin-top: 16px;
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.upcoming-banner.is-loading .upcoming-banner-title,
+.upcoming-banner.is-loading .upcoming-banner-value,
+.upcoming-banner.is-loading .upcoming-banner-status {
+  opacity: 0.75;
+}
+
+@keyframes upcomingSweep {
+  0%, 100% {
+    transform: translateX(-130%);
+  }
+  48% {
+    transform: translateX(130%);
+  }
+  52% {
+    transform: translateX(130%);
+  }
+}
+
+@media (max-width: 768px) {
+  .upcoming-banner {
+    padding: 24px 18px;
+  }
+
+  .upcoming-banner-head {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .upcoming-banner-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
 .btn-red {
   background: var(--red-gradient);
   color: #FFFFFF;
