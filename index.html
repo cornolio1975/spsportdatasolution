@@ -151,6 +151,24 @@
     </div>
   </section>
 
+  <!-- Tournament Registration Banner Section -->
+  <section id="registration-banner" class="section section-upcoming-banner">
+    <div class="container">
+      <div class="upcoming-banner" id="ktUpcomingBanner">
+        <div class="upcoming-banner-head">
+          <div class="badge badge-red" style="margin-bottom: 0;">TOURNAMENT REGISTRATION</div>
+        </div>
+        <h2 class="upcoming-banner-title" style="margin-top: 16px;">Register your club and participants for upcoming KarateTech tournaments.</h2>
+        <div class="upcoming-banner-actions">
+          <a href="https://karatetechhybrid.spsportdatasolution.org/registration/start" class="btn btn-red">REGISTRATION</a>
+          <a href="assets/Atheletes_registration_template.xls" download class="btn btn-outline" title="Download Excel Registration Template">
+            <span style="font-size: 1.2rem;">📥</span> Download Template
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
   <!-- Upcoming Tournaments Section (Dynamically Loaded from KarateTech DB) -->
   <section id="tournaments" class="section section-alt">
     <div class="container">
@@ -563,146 +581,7 @@
     </div>
   </footer>
 
-  <!-- DYNAMIC TOURNAMENT REGISTRATION MODAL OVERLAY -->
-  <div class="modal-overlay" id="registrationModal" aria-hidden="true" role="dialog" aria-labelledby="modalTitle">
-    <div class="modal-container">
-      <button class="modal-close-btn" id="modalCloseBtn" aria-label="Close Registration Modal">&times;</button>
-      
-      <!-- Auto-Loaded Tournament Details Banner -->
-      <div class="modal-banner" id="modalTournamentBanner">
-        <div class="badge badge-red">Selected Tournament Details</div>
-        <h2 class="modal-tournament-title" id="regTournName">SENSHI GOJU-RYU KARATE CHAMPIONSHIP 2026</h2>
-        <div class="tournament-details-grid">
-          <div class="detail-item">
-            <span class="detail-label">Organiser</span>
-            <span class="detail-val" id="regTournOrganiser">KELAB KARATE DO SENSHI GOJU-RYU</span>
-          </div>
-          <div class="detail-item">
-            <span class="detail-label">Date & Time</span>
-            <span class="detail-val" id="regTournDateTime">06/09/2026 (08:00 AM)</span>
-          </div>
-          <div class="detail-item">
-            <span class="detail-label">Venue / Location</span>
-            <span class="detail-val" id="regTournVenue">Dewan Serbaguna MBSJ, Bandar Kinrara 5, Selangor</span>
-          </div>
-          <div class="detail-item">
-            <span class="detail-label">Contact Person</span>
-            <span class="detail-val" id="regTournContactPerson">Senshi Admin (+60 12-152 3691)</span>
-          </div>
-          <div class="detail-item">
-            <span class="detail-label">Contact Email</span>
-            <span class="detail-val" id="regTournContactEmail">karatetech.spsds@gmail.com</span>
-          </div>
-        </div>
-      </div>
 
-      <!-- Registration Form Body -->
-      <div class="modal-body">
-        <form id="tournamentRegForm" class="contact-form">
-          <!-- User Registration Information -->
-          <div class="form-section">
-            <h3 class="form-section-title">1. User / Instructor Information</h3>
-            <div class="grid-2">
-              <div class="form-group">
-                <label for="regFullName">Full Name *</label>
-                <input type="text" id="regFullName" class="form-control" placeholder="e.g. Sensei Vamathevan" required>
-              </div>
-              <div class="form-group">
-                <label for="regDojoName">Dojo / Club Name *</label>
-                <input type="text" id="regDojoName" class="form-control" placeholder="e.g. Senshi Goju-Ryu Karate Club" required>
-              </div>
-            </div>
-
-            <div class="form-group style-mt-sm">
-              <label for="regAddress">Full Address *</label>
-              <input type="text" id="regAddress" class="form-control" placeholder="No. 12, Jalan Kinrara 5, Puchong, Selangor" required>
-            </div>
-
-            <div class="grid-2 style-mt-sm">
-              <div class="form-group">
-                <label for="regPhone">Contact Number *</label>
-                <input type="tel" id="regPhone" class="form-control" placeholder="+60187776655" required>
-              </div>
-              <div class="form-group">
-                <label for="regEmail">Email Address *</label>
-                <input type="email" id="regEmail" class="form-control" placeholder="instructor@senshikarate.org" required>
-              </div>
-            </div>
-          </div>
-
-          <!-- Participant Registration Workflow -->
-          <div class="form-section style-mt-lg">
-            <div class="flex-between">
-              <h3 class="form-section-title">2. Participant Registration (CSV Upload)</h3>
-              <a href="senshi_karate_registration_template.csv" download="senshi_karate_registration_template.csv" class="btn-link">
-                📥 Download Sample CSV Template
-              </a>
-            </div>
-            
-            <p class="text-muted text-xs style-mb-sm">
-              Upload your club's CSV spreadsheet. Must include: Full Name, Gender, DOB (YYYY-MM-DD), Weight, Height, IC/Passport, and Club.
-            </p>
-
-            <div class="upload-dropzone" id="csvDropzone">
-              <input type="file" id="csvFileInput" accept=".csv" class="file-input-hidden">
-              <label for="csvFileInput" class="dropzone-label">
-                <span class="upload-icon">📁</span>
-                <span class="upload-title">Drag & drop your completed CSV file here</span>
-                <span class="upload-sub">or click to browse from device</span>
-              </label>
-            </div>
-
-            <!-- Paste Data Alternative -->
-            <div class="style-mt-sm">
-              <label for="csvPasteArea" class="label-xs">Or Paste Raw CSV Data</label>
-              <textarea id="csvPasteArea" class="form-control code-font" rows="3" placeholder="First Name&#9;Last Name&#9;Gender&#9;DOB&#9;Weight&#9;Size&#9;Passport/IC&#9;Club&#9;Email&#9;Phone"></textarea>
-              <div class="flex-between style-mt-xs">
-                <button type="button" class="btn-text" id="btnInsertSampleCsv">Insert Sample CSV Data</button>
-                <button type="button" class="btn btn-outline btn-sm" id="btnParseCsv">Parse Participants &rarr;</button>
-              </div>
-            </div>
-
-            <!-- Parsed Participants Preview Table -->
-            <div class="preview-table-wrapper style-mt-md" id="previewTableContainer" style="display: none;">
-              <div class="table-header-bar">
-                <span class="table-title">Parsed Participants List (<span id="parsedCount">0</span> athletes)</span>
-                <span class="table-badge" id="tableValidationStatus">Ready for Submission</span>
-              </div>
-              <div class="table-scroll font-xs">
-                <table class="data-table" id="participantTable">
-                  <thead>
-                    <tr>
-                      <th>#</th>
-                      <th>Full Name</th>
-                      <th>Gender</th>
-                      <th>DOB</th>
-                      <th>Weight</th>
-                      <th>Height</th>
-                      <th>IC / Passport</th>
-                      <th>Club</th>
-                      <th>Kumite</th>
-                      <th>Kata</th>
-                    </tr>
-                  </thead>
-                  <tbody id="participantTableBody">
-                    <!-- Dynamic Rows -->
-                  </tbody>
-                </table>
-              </div>
-            </div>
-          </div>
-
-          <!-- Action Buttons -->
-          <div class="modal-actions">
-            <button type="button" class="btn btn-outline" id="btnCancelReg">Cancel</button>
-            <button type="button" class="btn btn-outline" id="btnModifyInfo" style="display: none;">Modify Info</button>
-            <button type="submit" class="btn btn-red" id="btnSubmitReg">Send Registration &rarr;</button>
-          </div>
-        </form>
-      </div>
-    </div>
-  </div>
-
-  <script src="app.js?v=20260804a"></script>
+  <script src="app.js?v=20260912"></script>
 </body>
 </html>
