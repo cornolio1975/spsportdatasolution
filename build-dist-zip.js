@@ -39,7 +39,7 @@ try {
   }
   fs.mkdirSync(stageDir, { recursive: true });
 
-  const itemsToCopy = ['index.html', 'styles.css', 'app.js', 'package.json', 'assets', 'karatetech', 'kabadditech'];
+  const itemsToCopy = ['index.html', 'styles.css', 'main.js', 'assets', 'karatetech', 'kabadditech'];
   itemsToCopy.forEach(item => {
     const srcPath = path.join(__dirname, item);
     const destPath = path.join(stageDir, item);
