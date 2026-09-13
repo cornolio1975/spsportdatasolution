@@ -114,6 +114,24 @@ function renderTournamentCards(tournaments) {
     const status = t.status || 'Open';
     const emoji = t.poster_emoji || '🏆';
 
+    let buttonHtml = '';
+    
+    if (!t.id) {
+        buttonHtml = `<button class="btn btn-red width-full" disabled style="opacity: 0.6; cursor: not-allowed;">Registration is currently unavailable.</button>`;
+    } else {
+        const upperStatus = status.toUpperCase();
+        if (upperStatus === 'OPEN') {
+            buttonHtml = `<a href="https://karatetechhybrid.spsportdatasolution.org/registration?tournament_id=${t.id}" class="btn btn-red width-full">REGISTER NOW</a>`;
+        } else if (upperStatus === 'NOT YET OPEN') {
+            buttonHtml = `<button class="btn btn-red width-full" disabled style="opacity: 0.6; cursor: not-allowed;">REGISTRATION NOT YET OPEN</button>`;
+        } else if (upperStatus === 'CLOSED' || upperStatus === 'COMPLETED') {
+            buttonHtml = `<button class="btn btn-red width-full" disabled style="opacity: 0.6; cursor: not-allowed;">REGISTRATION CLOSED</button>`;
+        } else {
+            // Default open for any other unhandled active statuses like 'Live' or fallback
+            buttonHtml = `<a href="https://karatetechhybrid.spsportdatasolution.org/registration?tournament_id=${t.id}" class="btn btn-red width-full">REGISTER NOW</a>`;
+        }
+    }
+
     return `
       <div class="glass-card tournament-card">
         <div class="tournament-banner-box">
@@ -140,9 +158,7 @@ function renderTournamentCards(tournaments) {
         </div>
 
         <div style="margin-top: auto; padding-top: 16px;">
-          <a href="https://karatetechhybrid.spsportdatasolution.org/registration/start?event=${t.id}" class="btn btn-red width-full">
-            REGISTRATION &rarr;
-          </a>
+          ${buttonHtml}
         </div>
       </div>
     `;
