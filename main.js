@@ -11,15 +11,16 @@ const SUPABASE_HEADERS = {
   'Authorization': `Bearer ${SUPABASE_ANON_KEY}`
 };
 
+// Initialize Supabase Client
+const supabaseClient = window.supabase ? window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY) : null;
+
 let loadedTournaments = [];
 
 document.addEventListener('DOMContentLoaded', () => {
   // 1. Initialize Navigation & Smooth Scroll
   initNavbar();
 
-  // 1.1 Render KarateTech visitor banner from live public tournaments feed
-  initKarateTechUpcomingBanner();
-  
+
   // 2. Fetch Live Tournaments & Statistics from KarateTech DB
   fetchUpcomingTournaments();
   fetchLiveStatistics();
@@ -83,35 +84,38 @@ async function fetchUpcomingTournaments() {
   if (!grid) return;
 
   try {
-    const res = await fetch(`${SUPABASE_URL}/rest/v1/tournaments?select=*`, {
-      headers: SUPABASE_HEADERS
-    });
-    if (!res.ok) throw new Error(`HTTP error ${res.status}`);
+    let data;
+    if (supabaseClient) {
+      const res = await supabaseClient
+        .from('tournaments')
+        .select('*')
+        .order('date_iso', { ascending: true });
+      if (res.error) throw res.error;
+      data = res.data;
+    } else {
+      throw new Error("Supabase client not initialized.");
+    }
     
-    let data = await res.json();
-    if (Array.isArray(data) && data.length > 0) {
-      // Filter out Draft, Archived, Deleted, Completed
-      const excludedStatuses = ['DRAFT', 'ARCHIVED', 'DELETED'];
-      data = data.filter(t => !excludedStatuses.includes((t.status || '').toUpperCase()) && t.is_published !== false);
+    if (data && data.length > 0) {
+      // Filter out Draft, Deleted, Archived, Completed, Canceled
+      // The prompt specifically asks to display 'Published' or 'Upcoming'
+      const excludedStatuses = ['DRAFT', 'DELETED', 'ARCHIVED', 'COMPLETED', 'CANCELED', 'CANCELLED'];
+      const filteredData = data.filter(t => !excludedStatuses.includes((t.status || '').toUpperCase()));
 
-      // Sort: 1. Registration Open, 2. Nearest upcoming date
-      data.sort((a, b) => {
-        const aStatus = (a.registration_status || a.status || '').toUpperCase();
-        const bStatus = (b.registration_status || b.status || '').toUpperCase();
-        
-        const aIsOpen = aStatus === 'OPEN' || aStatus === 'REGISTRATION OPEN';
-        const bIsOpen = bStatus === 'OPEN' || bStatus === 'REGISTRATION OPEN';
-
-        if (aIsOpen && !bIsOpen) return -1;
-        if (!aIsOpen && bIsOpen) return 1;
-
-        const dateA = new Date(a.date_iso || a.created_at || 0).getTime();
-        const dateB = new Date(b.date_iso || b.created_at || 0).getTime();
+      // Secondary sort by start time (if available) - date_iso already handles the primary sort
+      filteredData.sort((a, b) => {
+        const dateA = new Date(a.date_iso || 0).getTime();
+        const dateB = new Date(b.date_iso || 0).getTime();
+        if (dateA === dateB) {
+          const timeA = a.start_time || '00:00';
+          const timeB = b.start_time || '00:00';
+          return timeA.localeCompare(timeB);
+        }
         return dateA - dateB;
       });
 
-      loadedTournaments = data;
-      renderTournamentCards(data);
+      loadedTournaments = filteredData;
+      renderTournamentCards(filteredData);
     } else {
       renderFallbackTournaments();
     }
@@ -135,15 +139,21 @@ function renderTournamentCards(tournaments) {
     const venue = t.venue || 'TBA';
     const city = t.city || '';
     const state = t.state || '';
-    const location = city && state ? `${city}, ${state}` : (city || state || 'TBA');
+    const cityState = [city, state].filter(Boolean).join(' / ');
     const dateStr = t.date || 'TBA';
-    const regClose = t.registration_close || 'TBA';
+    const startTime = t.start_time || 'TBA';
     const organizer = t.organizer || 'TBA';
     
+    let regCloseStr = t.registration_close || 'TBA';
+    if (t.registration_close_iso) {
+      regCloseStr = new Date(t.registration_close_iso).toLocaleDateString();
+    }
+
     // Status Logic
     const tournamentStatus = t.status || 'Draft';
     const regStatus = (t.registration_status || '').toUpperCase() || tournamentStatus.toUpperCase();
     const isCompleted = tournamentStatus.toUpperCase() === 'COMPLETED';
+    const isLive = tournamentStatus.toUpperCase() === 'LIVE';
     
     let buttonHtml = '';
     let regStatusText = regStatus;
@@ -155,38 +165,47 @@ function renderTournamentCards(tournaments) {
             regStatusText = 'TOURNAMENT COMPLETED';
             buttonHtml = `<button class="btn btn-outline width-full" disabled style="opacity: 0.6; cursor: not-allowed;">TOURNAMENT COMPLETED</button>`;
         } else if (regStatus === 'OPEN' || regStatus === 'REGISTRATION OPEN') {
-            regStatusText = 'OPEN';
+            regStatusText = 'REGISTRATION OPEN';
             buttonHtml = `<a href="https://karatetechhybrid.spsportdatasolution.org/registration?tournament_id=${t.id}" class="btn btn-red width-full">REGISTER NOW</a>`;
-        } else if (regStatus === 'NOT YET OPEN') {
-            regStatusText = 'NOT YET OPEN';
-            buttonHtml = `<button class="btn btn-outline width-full" disabled style="opacity: 0.6; cursor: not-allowed;">REGISTRATION NOT YET OPEN</button>`;
+        } else if (regStatus === 'NOT YET OPEN' || regStatus === 'NOT OPEN') {
+            regStatusText = 'REGISTRATION NOT OPEN';
+            buttonHtml = `<button class="btn btn-outline width-full" disabled style="opacity: 0.6; cursor: not-allowed;">REGISTRATION NOT OPEN</button>`;
         } else if (regStatus === 'CLOSED' || regStatus === 'REGISTRATION CLOSED') {
-            regStatusText = 'CLOSED';
+            regStatusText = 'REGISTRATION CLOSED';
             buttonHtml = `<button class="btn btn-outline width-full" disabled style="opacity: 0.6; cursor: not-allowed;">REGISTRATION CLOSED</button>`;
         } else {
             regStatusText = regStatus;
             buttonHtml = `<a href="https://karatetechhybrid.spsportdatasolution.org/registration?tournament_id=${t.id}" class="btn btn-red width-full">REGISTER NOW</a>`;
         }
     }
+    
+    let liveHtml = '';
+    if (isLive) {
+       liveHtml = `<a href="https://karatetechhybrid.spsportdatasolution.org/live?tournament_id=${t.id}" class="btn btn-red width-full" style="background-color: #ff0000; border-color: #ff0000; animation: pulse 2s infinite;">LIVE TOURNAMENT</a>`;
+    }
 
-    const bannerImg = t.banner_url ? `<img src="${escapeHtml(t.banner_url)}" alt="Tournament Banner" style="width: 100%; height: 180px; object-fit: cover; border-radius: 8px 8px 0 0;" onerror="this.style.display='none'">` : `<div style="height: 180px; background: linear-gradient(135deg, #2a2a2a, #1a1a1a); border-radius: 8px 8px 0 0; display: flex; align-items: center; justify-content: center; font-size: 3rem;">${t.poster_emoji || '🏆'}</div>`;
-    const logoImg = t.logo_url ? `<img src="${escapeHtml(t.logo_url)}" alt="Logo" style="width: 64px; height: 64px; border-radius: 50%; border: 3px solid #1a1a1a; position: absolute; bottom: -32px; left: 24px; background: #fff;" onerror="this.style.display='none'">` : '';
+    const bannerBackground = t.banner_gradient || 'linear-gradient(135deg, #2a2a2a, #1a1a1a)';
+    let bannerImg = '';
+    if (t.banner_url || t.logo_url) {
+       const imgUrl = t.banner_url || t.logo_url;
+       bannerImg = `<div style="height: 180px; background-image: url('${escapeHtml(imgUrl)}'); background-size: cover; background-position: center; border-radius: 8px 8px 0 0;"></div>`;
+    } else {
+       bannerImg = `<div style="height: 180px; background: ${escapeHtml(bannerBackground)}; border-radius: 8px 8px 0 0; display: flex; align-items: center; justify-content: center; font-size: 3rem;">${t.poster_emoji || '🏆'}</div>`;
+    }
 
     return `
       <div class="glass-card tournament-card" style="padding: 0; display: flex; flex-direction: column;">
-        <div style="position: relative; margin-bottom: 40px;">
+        <div style="position: relative; margin-bottom: 20px;">
           ${bannerImg}
-          ${logoImg}
           <div style="position: absolute; top: 16px; right: 16px;">
             <span class="status-pill status-open" style="background: rgba(0,0,0,0.7); backdrop-filter: blur(4px);">
-              ● ${escapeHtml(tournamentStatus)}
+              ● ${escapeHtml(tournamentStatus.toUpperCase())}
             </span>
           </div>
         </div>
         
         <div style="padding: 0 24px 24px; flex: 1; display: flex; flex-direction: column;">
-          <h3 style="font-size: 1.3rem; margin-bottom: 4px; line-height: 1.3;">${escapeHtml(name)}</h3>
-          <div style="color: #a0a0a0; font-size: 0.9rem; margin-bottom: 16px;">Organizer: ${escapeHtml(organizer)}</div>
+          <h3 style="font-size: 1.3rem; margin-bottom: 16px; line-height: 1.3;">${escapeHtml(name)}</h3>
           
           <div class="tournament-info-list" style="margin-bottom: 24px;">
             <div class="tournament-info-row">
@@ -194,22 +213,26 @@ function renderTournamentCards(tournaments) {
               <span>Date: <strong>${escapeHtml(dateStr)}</strong></span>
             </div>
             <div class="tournament-info-row">
-              <span class="info-icon">📍</span>
-              <span>${escapeHtml(venue)}<br><small style="color: #888;">${escapeHtml(location)}</small></span>
-            </div>
-            <div class="tournament-info-row" style="margin-top: 8px; padding-top: 8px; border-top: 1px solid rgba(255,255,255,0.1);">
-              <span class="info-icon">📝</span>
-              <span>Registration: <strong style="color: ${regStatusText === 'OPEN' ? '#00e676' : '#ff5252'}">${escapeHtml(regStatusText)}</strong></span>
+              <span class="info-icon">⏱️</span>
+              <span>Time: <strong>${escapeHtml(startTime)}</strong></span>
             </div>
             <div class="tournament-info-row">
-              <span class="info-icon">⏳</span>
-              <span>Closing: <strong>${escapeHtml(regClose)}</strong></span>
+              <span class="info-icon">📍</span>
+              <span>Venue: <strong>${escapeHtml(venue)}</strong><br><small style="color: #888;">${escapeHtml(cityState)}</small></span>
+            </div>
+            <div class="tournament-info-row" style="margin-top: 8px;">
+              <span class="info-icon">🏢</span>
+              <span>Organizer: <strong>${escapeHtml(organizer)}</strong></span>
+            </div>
+            <div class="tournament-info-row">
+              <span class="info-icon">🔒</span>
+              <span>Registration closes: <strong>${escapeHtml(regCloseStr)}</strong></span>
             </div>
           </div>
 
           <div style="margin-top: auto; display: flex; flex-direction: column; gap: 12px;">
             <a href="tournament.html?id=${t.id}" class="btn btn-outline width-full" style="text-align: center;">VIEW TOURNAMENT</a>
-            ${buttonHtml}
+            ${isLive ? liveHtml : buttonHtml}
           </div>
         </div>
       </div>
@@ -339,95 +362,6 @@ function initContactForm() {
       }
     });
   }
-}
-
-/* ==========================================================================
-   5. KARATETECH UPCOMING BANNER (PUBLIC TOURNAMENT FEED)
-   ========================================================================== */
-async function initKarateTechUpcomingBanner() {
-  const banner = document.getElementById('ktUpcomingBanner');
-  if (!banner) return;
-
-  const tournamentsPageUrl = 'https://karatetech.spsportdatasolution.org/public/tournaments/';
-  const registerNowUrl = 'https://spsportdatasolution.org/?openRegistration=1#tournaments';
-
-  const titleEl = banner.querySelector('.upcoming-banner-title');
-  const statusEl = banner.querySelector('.upcoming-banner-status');
-  const valueEls = banner.querySelectorAll('.upcoming-banner-value');
-  const actionsEl = banner.querySelector('.upcoming-banner-actions');
-
-  const setValues = ({ title, status, date, registrationClose, venue, registerUrl }) => {
-    if (titleEl) titleEl.innerText = title;
-    if (statusEl) statusEl.innerText = status;
-    if (valueEls[0]) valueEls[0].innerText = date || 'To be announced';
-    if (valueEls[1]) valueEls[1].innerText = registrationClose || 'To be announced';
-    if (valueEls[2]) valueEls[2].innerText = venue || 'Venue announcement pending';
-
-    if (actionsEl) {
-      const registerButton = `<a href="${escapeHtml(registerNowUrl)}" target="_blank" rel="noopener noreferrer" class="btn btn-red">Register Now</a>`;
-
-      actionsEl.innerHTML = `${registerButton}<a href="${tournamentsPageUrl}" target="_blank" rel="noopener noreferrer" class="btn btn-outline">View Tournaments</a>`;
-    }
-
-    banner.classList.remove('is-loading');
-  };
-
-  try {
-    const res = await fetch(tournamentsPageUrl);
-    if (!res.ok) throw new Error(`Public tournaments fetch failed: ${res.status}`);
-
-    const html = await res.text();
-    const parsedData = parsePublicTournamentHtml(html, tournamentsPageUrl);
-
-    if (!parsedData) throw new Error('No upcoming tournament found in source HTML');
-
-    setValues(parsedData);
-  } catch (error) {
-    console.warn('Upcoming banner source fetch failed, using fallback data.', error);
-    setValues({
-      title: 'SENSHI GOJU-RYU KARATE CHAMPIONSHIP 2026',
-      status: 'Live registrations available',
-      date: '06/09/2026',
-      registrationClose: 'September 1, 2026',
-      venue: 'Dewan Serbaguna MBSJ, Bandar Kinrara 5, Selangor',
-      registerUrl: tournamentsPageUrl
-    });
-  }
-}
-
-function parsePublicTournamentHtml(html, sourceUrl) {
-  if (!html) return null;
-
-  const parser = new DOMParser();
-  const doc = parser.parseFromString(html, 'text/html');
-
-  const registerAnchor = doc.querySelector('a[href*="/public/register"]');
-  const registerHref = registerAnchor?.getAttribute('href') || '';
-  const registerUrl = registerHref ? new URL(registerHref, sourceUrl).toString() : '';
-
-  const registerLabel = registerAnchor?.textContent?.trim() || '';
-  const titleFromCta = registerLabel.replace(/^Register\s+for\s+/i, '').trim();
-
-  const primaryHeading = doc.querySelector('h2')?.textContent?.trim() || '';
-  const title = titleFromCta || primaryHeading || 'Upcoming KarateTech Tournament';
-
-  const bodyText = (doc.body?.innerText || html)
-    .replace(/\s+/g, ' ')
-    .trim();
-
-  const date = (bodyText.match(/TOURNAMENT\s*DATE\s*([0-9]{2}\/[0-9]{2}\/[0-9]{4})/i) || [])[1] || '';
-  const registrationClose = (bodyText.match(/REGISTRATION\s*CLOSES\s*([A-Za-z]+\s+[0-9]{1,2},\s+[0-9]{4})/i) || [])[1] || '';
-  const venue = (bodyText.match(/VENUE\s*(.*?)\s*REGISTRATION\s*CLOSES/i) || [])[1] || '';
-  const status = (bodyText.match(/STATUS\s*([A-Za-z]+)/i) || [])[1] || '';
-
-  return {
-    title,
-    status: status ? `Status: ${status}` : 'Upcoming tournament announced',
-    date,
-    registrationClose,
-    venue,
-    registerUrl
-  };
 }
 
 

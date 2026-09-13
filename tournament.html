@@ -207,19 +207,27 @@
       const tournamentStatus = t.status || 'Draft';
       const regStatus = (t.registration_status || '').toUpperCase() || tournamentStatus.toUpperCase();
       const isCompleted = tournamentStatus.toUpperCase() === 'COMPLETED';
+      const isLive = tournamentStatus.toUpperCase() === 'LIVE';
+      const isCancelled = tournamentStatus.toUpperCase() === 'CANCELLED' || tournamentStatus.toUpperCase() === 'CANCELED';
 
       let buttonHtml = '';
       let statusAlertHtml = '';
 
-      if (isCompleted) {
+      if (isCancelled) {
+          statusAlertHtml = `<div class="status-alert status-closed-alert">TOURNAMENT CANCELLED</div>`;
+          buttonHtml = `<button class="btn btn-outline width-full" disabled style="opacity: 0.6; cursor: not-allowed; padding: 16px; font-size: 1.2rem;">TOURNAMENT CANCELLED</button>`;
+      } else if (isLive) {
+          statusAlertHtml = `<div class="status-alert status-open-alert" style="background: rgba(255, 0, 0, 0.1); color: #ff0000; border: 1px solid #ff0000; animation: pulse 2s infinite;">LIVE TOURNAMENT</div>`;
+          buttonHtml = `<a href="https://karatetechhybrid.spsportdatasolution.org/live?tournament_id=${t.id}" class="btn btn-red width-full" style="padding: 16px; font-size: 1.2rem; text-align: center; background-color: #ff0000; border-color: #ff0000; animation: pulse 2s infinite;">LIVE TOURNAMENT</a>`;
+      } else if (isCompleted) {
           statusAlertHtml = `<div class="status-alert status-closed-alert">TOURNAMENT COMPLETED</div>`;
           buttonHtml = `<button class="btn btn-outline width-full" disabled style="opacity: 0.6; cursor: not-allowed; padding: 16px; font-size: 1.2rem;">TOURNAMENT COMPLETED</button>`;
       } else if (regStatus === 'OPEN' || regStatus === 'REGISTRATION OPEN') {
           statusAlertHtml = `<div class="status-alert status-open-alert">REGISTRATION IS CURRENTLY OPEN</div>`;
           buttonHtml = `<a href="https://karatetechhybrid.spsportdatasolution.org/registration?tournament_id=${t.id}" class="btn btn-red width-full" style="padding: 16px; font-size: 1.2rem; text-align: center;">REGISTER NOW</a>`;
-      } else if (regStatus === 'NOT YET OPEN') {
-          statusAlertHtml = `<div class="status-alert status-waiting-alert">REGISTRATION NOT YET OPEN</div>`;
-          buttonHtml = `<button class="btn btn-outline width-full" disabled style="opacity: 0.6; cursor: not-allowed; padding: 16px; font-size: 1.2rem;">REGISTRATION NOT YET OPEN</button>`;
+      } else if (regStatus === 'NOT YET OPEN' || regStatus === 'NOT OPEN') {
+          statusAlertHtml = `<div class="status-alert status-waiting-alert">REGISTRATION NOT OPEN</div>`;
+          buttonHtml = `<button class="btn btn-outline width-full" disabled style="opacity: 0.6; cursor: not-allowed; padding: 16px; font-size: 1.2rem;">REGISTRATION NOT OPEN</button>`;
       } else if (regStatus === 'CLOSED' || regStatus === 'REGISTRATION CLOSED') {
           statusAlertHtml = `<div class="status-alert status-closed-alert">REGISTRATION CLOSED</div>`;
           buttonHtml = `<button class="btn btn-outline width-full" disabled style="opacity: 0.6; cursor: not-allowed; padding: 16px; font-size: 1.2rem;">REGISTRATION CLOSED</button>`;
@@ -240,6 +248,7 @@
             
             <div class="tournament-meta">
               <div class="meta-item"><span class="icon">📅</span> ${escapeHtml(dateStr)}</div>
+              <div class="meta-item"><span class="icon">⏱️</span> ${escapeHtml(t.start_time || 'TBA')}</div>
               <div class="meta-item"><span class="icon">📍</span> ${escapeHtml(venue)}</div>
             </div>
           </div>
