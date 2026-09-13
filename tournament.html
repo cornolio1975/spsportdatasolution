@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tournament Details | SP SPORTDATA SOLUTION</title>
+  <meta name="description" content="Tournament Registration and Details via SP SPORTDATA SOLUTION and KarateTech.">
+  <link rel="stylesheet" href="styles.css?v=20260804b">
+  <link rel="icon" type="image/png" href="assets/Favicon_SP.png">
+  <style>
+    .tournament-hero {
+      position: relative;
+      padding: 80px 0;
+      background-size: cover;
+      background-position: center;
+      background-color: #1a1a1a;
+      min-height: 400px;
+      display: flex;
+      align-items: center;
+      border-bottom: 4px solid #e50914;
+    }
+    .tournament-hero::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: linear-gradient(to right, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.7) 100%);
+    }
+    .tournament-hero .container {
+      position: relative;
+      z-index: 2;
+    }
+    .tournament-meta {
+      display: flex;
+      gap: 24px;
+      margin-top: 24px;
+      flex-wrap: wrap;
+    }
+    .meta-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 1.1rem;
+    }
+    .meta-item .icon {
+      font-size: 1.4rem;
+      color: #e50914;
+    }
+    .details-grid {
+      display: grid;
+      grid-template-columns: 2fr 1fr;
+      gap: 40px;
+      margin-top: 40px;
+    }
+    @media (max-width: 900px) {
+      .details-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+    .details-section {
+      margin-bottom: 40px;
+    }
+    .details-section h3 {
+      font-size: 1.5rem;
+      color: #fff;
+      margin-bottom: 24px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+    }
+    .info-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+    .info-list li {
+      display: flex;
+      justify-content: space-between;
+      padding: 12px 0;
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+    }
+    .info-list li:last-child {
+      border-bottom: none;
+    }
+    .info-list .label {
+      color: #a0a0a0;
+    }
+    .info-list .val {
+      font-weight: 600;
+      text-align: right;
+    }
+    .status-alert {
+      padding: 16px;
+      border-radius: 8px;
+      text-align: center;
+      font-weight: bold;
+      margin-bottom: 24px;
+      font-size: 1.1rem;
+    }
+    .status-open-alert { background: rgba(0, 230, 118, 0.1); color: #00e676; border: 1px solid #00e676; }
+    .status-closed-alert { background: rgba(255, 82, 82, 0.1); color: #ff5252; border: 1px solid #ff5252; }
+    .status-waiting-alert { background: rgba(255, 171, 0, 0.1); color: #ffab00; border: 1px solid #ffab00; }
+  </style>
+</head>
+<body>
+
+  <header class="navbar scrolled" id="topNavbar" style="position: sticky; top: 0; z-index: 1000; background: rgba(10, 10, 10, 0.95);">
+    <div class="container nav-container">
+      <a href="index.html" class="brand-logo" aria-label="SP SPORTDATA SOLUTION Home">
+        <img src="assets/logo.jpg" alt="SP SPORTDATA SOLUTION Logo" class="brand-logo-img" loading="eager">
+      </a>
+      <a href="index.html#tournaments" class="btn btn-outline" style="margin-left: auto;">BACK TO TOURNAMENTS</a>
+    </div>
+  </header>
+
+  <main id="tournament-content">
+    <div style="padding: 120px 20px; text-align: center;">
+      <h2 style="margin-bottom: 16px;">Loading Tournament...</h2>
+      <div class="skeleton-box skeleton-line skeleton-title" style="margin: 0 auto;"></div>
+    </div>
+  </main>
+
+  <!-- Contact / Footer -->
+  <section id="contact" class="section">
+    <div class="container" style="text-align: center; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 40px;">
+      <h2 class="section-title">Need <span class="text-red">Help?</span></h2>
+      <p class="section-subtitle">Contact the organizer or SP SPORTDATA SOLUTION for technical support.</p>
+    </div>
+  </section>
+
+  <script>
+    const SUPABASE_URL = 'https://wbwnnjfmfcpzjfbsyrvq.supabase.co';
+    const SUPABASE_ANON_KEY = 'sb_publishable_LWZdt84AzUFvyX0xoHYmug_O8-aQwwW';
+    
+    function escapeHtml(unsafe) {
+      if (typeof unsafe !== 'string') return '';
+      return unsafe
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+    }
+
+    async function loadTournament() {
+      const params = new URLSearchParams(window.location.search);
+      const id = params.get('id');
+      const contentDiv = document.getElementById('tournament-content');
+
+      if (!id) {
+        showError(contentDiv, "TOURNAMENT NOT FOUND", "No tournament ID provided.");
+        return;
+      }
+
+      try {
+        const res = await fetch(`${SUPABASE_URL}/rest/v1/tournaments?id=eq.${id}&select=*`, {
+          headers: {
+            'apikey': SUPABASE_ANON_KEY,
+            'Authorization': `Bearer ${SUPABASE_ANON_KEY}`
+          }
+        });
+
+        if (!res.ok) throw new Error(`HTTP error ${res.status}`);
+        const data = await res.json();
+
+        if (!data || data.length === 0) {
+          showError(contentDiv, "TOURNAMENT NOT FOUND", "The requested tournament does not exist or has been removed.");
+          return;
+        }
+
+        const t = data[0];
+        renderTournamentDetails(contentDiv, t);
+      } catch (err) {
+        console.error("Error fetching tournament:", err);
+        showError(contentDiv, "ERROR", "Unable to load tournament information. Please try again shortly.");
+      }
+    }
+
+    function showError(container, title, message) {
+      container.innerHTML = `
+        <div class="container" style="padding: 100px 0; text-align: center;">
+          <div style="font-size: 4rem; margin-bottom: 24px;">⚠️</div>
+          <h1 style="margin-bottom: 16px;">${escapeHtml(title)}</h1>
+          <p style="color: #a0a0a0; font-size: 1.2rem; margin-bottom: 32px;">${escapeHtml(message)}</p>
+          <a href="index.html#tournaments" class="btn btn-red">BACK TO UPCOMING TOURNAMENTS</a>
+        </div>
+      `;
+    }
+
+    function renderTournamentDetails(container, t) {
+      const name = t.name || 'Tournament Name';
+      const organizer = t.organizer || 'TBA';
+      const desc = t.description || 'No description available.';
+      const dateStr = t.date || 'TBA';
+      const venue = t.venue || 'TBA';
+      const address = t.address || '';
+      const city = t.city || '';
+      const state = t.state || '';
+      const country = t.country || '';
+      
+      const locationArr = [address, city, state, country].filter(Boolean);
+      const fullAddress = locationArr.length > 0 ? locationArr.join(', ') : 'TBA';
+
+      const regOpenDate = t.registration_open_iso ? new Date(t.registration_open_iso).toLocaleDateString() : 'TBA';
+      const regCloseDate = t.registration_close || (t.registration_close_iso ? new Date(t.registration_close_iso).toLocaleDateString() : 'TBA');
+      const regCloseTime = t.registration_close_time || '23:59';
+      const regFee = t.registration_fee || 'See Bulletin';
+      
+      const tournamentStatus = t.status || 'Draft';
+      const regStatus = (t.registration_status || '').toUpperCase() || tournamentStatus.toUpperCase();
+      const isCompleted = tournamentStatus.toUpperCase() === 'COMPLETED';
+
+      let buttonHtml = '';
+      let statusAlertHtml = '';
+
+      if (isCompleted) {
+          statusAlertHtml = `<div class="status-alert status-closed-alert">TOURNAMENT COMPLETED</div>`;
+          buttonHtml = `<button class="btn btn-outline width-full" disabled style="opacity: 0.6; cursor: not-allowed; padding: 16px; font-size: 1.2rem;">TOURNAMENT COMPLETED</button>`;
+      } else if (regStatus === 'OPEN' || regStatus === 'REGISTRATION OPEN') {
+          statusAlertHtml = `<div class="status-alert status-open-alert">REGISTRATION IS CURRENTLY OPEN</div>`;
+          buttonHtml = `<a href="https://karatetechhybrid.spsportdatasolution.org/registration?tournament_id=${t.id}" class="btn btn-red width-full" style="padding: 16px; font-size: 1.2rem; text-align: center;">REGISTER NOW</a>`;
+      } else if (regStatus === 'NOT YET OPEN') {
+          statusAlertHtml = `<div class="status-alert status-waiting-alert">REGISTRATION NOT YET OPEN</div>`;
+          buttonHtml = `<button class="btn btn-outline width-full" disabled style="opacity: 0.6; cursor: not-allowed; padding: 16px; font-size: 1.2rem;">REGISTRATION NOT YET OPEN</button>`;
+      } else if (regStatus === 'CLOSED' || regStatus === 'REGISTRATION CLOSED') {
+          statusAlertHtml = `<div class="status-alert status-closed-alert">REGISTRATION CLOSED</div>`;
+          buttonHtml = `<button class="btn btn-outline width-full" disabled style="opacity: 0.6; cursor: not-allowed; padding: 16px; font-size: 1.2rem;">REGISTRATION CLOSED</button>`;
+      } else {
+          statusAlertHtml = `<div class="status-alert status-open-alert">${escapeHtml(regStatus)}</div>`;
+          buttonHtml = `<a href="https://karatetechhybrid.spsportdatasolution.org/registration?tournament_id=${t.id}" class="btn btn-red width-full" style="padding: 16px; font-size: 1.2rem; text-align: center;">REGISTER NOW</a>`;
+      }
+
+      const bgStyle = t.banner_url ? `background-image: url('${escapeHtml(t.banner_url)}');` : '';
+      const logoHtml = t.logo_url ? `<img src="${escapeHtml(t.logo_url)}" alt="Logo" style="width: 120px; height: 120px; border-radius: 50%; border: 4px solid #1a1a1a; margin-bottom: 24px; background: #fff;">` : `<div style="font-size: 4rem; margin-bottom: 16px;">${t.poster_emoji || '🏆'}</div>`;
+
+      container.innerHTML = `
+        <div class="tournament-hero" style="${bgStyle}">
+          <div class="container">
+            ${logoHtml}
+            <h1 style="font-size: 3rem; line-height: 1.2; margin-bottom: 16px; text-transform: uppercase;">${escapeHtml(name)}</h1>
+            <div style="font-size: 1.2rem; color: #ccc;">Organized by: <strong style="color: #fff;">${escapeHtml(organizer)}</strong></div>
+            
+            <div class="tournament-meta">
+              <div class="meta-item"><span class="icon">📅</span> ${escapeHtml(dateStr)}</div>
+              <div class="meta-item"><span class="icon">📍</span> ${escapeHtml(venue)}</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="container details-grid">
+          <div class="main-column">
+            <div class="glass-card details-section">
+              <h3>Tournament Information</h3>
+              <p style="white-space: pre-line; color: #d0d0d0; line-height: 1.7; font-size: 1.05rem;">${escapeHtml(desc)}</p>
+            </div>
+
+            <div class="glass-card details-section">
+              <h3>Venue & Location</h3>
+              <ul class="info-list">
+                <li><span class="label">Venue</span><span class="val">${escapeHtml(venue)}</span></li>
+                <li><span class="label">Address</span><span class="val" style="max-width: 60%;">${escapeHtml(fullAddress)}</span></li>
+              </ul>
+              ${t.location ? `<div style="margin-top: 16px;"><a href="${escapeHtml(t.location)}" target="_blank" class="btn btn-outline" style="padding: 8px 16px;">View on Map</a></div>` : ''}
+            </div>
+
+            <div class="glass-card details-section">
+              <h3>Important Information</h3>
+              <ul class="info-list">
+                <li><span class="label">Rules Version</span><span class="val">${escapeHtml(t.rules_version || 'WKF Standard')}</span></li>
+                <li><span class="label">Discipline</span><span class="val">${escapeHtml(t.discipline || 'Kumite & Kata')}</span></li>
+                ${t.organizer_contact ? `<li><span class="label">Contact</span><span class="val">${escapeHtml(t.organizer_contact)} ${t.organizer_phone ? `(${escapeHtml(t.organizer_phone)})` : ''}</span></li>` : ''}
+                ${t.organizer_email ? `<li><span class="label">Email</span><span class="val">${escapeHtml(t.organizer_email)}</span></li>` : ''}
+              </ul>
+              <div style="display: flex; gap: 16px; margin-top: 24px;">
+                ${t.pdf_url ? `<a href="${escapeHtml(t.pdf_url)}" target="_blank" class="btn btn-outline">Download Bulletin</a>` : ''}
+                ${t.additional_docs_url ? `<a href="${escapeHtml(t.additional_docs_url)}" target="_blank" class="btn btn-outline">Additional Documents</a>` : ''}
+              </div>
+            </div>
+          </div>
+
+          <div class="sidebar">
+            <div class="glass-card details-section" style="position: sticky; top: 100px;">
+              ${statusAlertHtml}
+              
+              <h3 style="margin-top: 0; padding-top: 0; font-size: 1.2rem;">Registration Details</h3>
+              <ul class="info-list" style="margin-bottom: 32px;">
+                <li><span class="label">Opens</span><span class="val">${escapeHtml(regOpenDate)}</span></li>
+                <li><span class="label">Closes</span><span class="val">${escapeHtml(regCloseDate)}</span></li>
+                <li><span class="label">Time</span><span class="val">${escapeHtml(regCloseTime)}</span></li>
+                <li><span class="label">Fee</span><span class="val">${escapeHtml(regFee)}</span></li>
+              </ul>
+
+              ${buttonHtml}
+
+              <div style="margin-top: 24px; text-align: center;">
+                <a href="index.html#tournaments" style="color: #a0a0a0; text-decoration: none; font-size: 0.9rem;">&larr; Back to Upcoming Tournaments</a>
+              </div>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    document.addEventListener('DOMContentLoaded', loadTournament);
+  </script>
+</body>
+</html>

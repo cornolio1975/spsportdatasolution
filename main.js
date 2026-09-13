@@ -4,8 +4,8 @@
  */
 
 // Supabase API Credentials for KarateTech backend queries
-const SUPABASE_URL = 'https://gpbeetknavfgmioaevtw.supabase.co';
-const SUPABASE_ANON_KEY = 'sb_publishable_YrvuGAWUdEZ0jZDPcZY7bg_YALorXNq';
+const SUPABASE_URL = 'https://wbwnnjfmfcpzjfbsyrvq.supabase.co';
+const SUPABASE_ANON_KEY = 'sb_publishable_LWZdt84AzUFvyX0xoHYmug_O8-aQwwW';
 const SUPABASE_HEADERS = {
   'apikey': SUPABASE_ANON_KEY,
   'Authorization': `Bearer ${SUPABASE_ANON_KEY}`
@@ -88,8 +88,28 @@ async function fetchUpcomingTournaments() {
     });
     if (!res.ok) throw new Error(`HTTP error ${res.status}`);
     
-    const data = await res.json();
+    let data = await res.json();
     if (Array.isArray(data) && data.length > 0) {
+      // Filter out Draft, Archived, Deleted, Completed
+      const excludedStatuses = ['DRAFT', 'ARCHIVED', 'DELETED'];
+      data = data.filter(t => !excludedStatuses.includes((t.status || '').toUpperCase()) && t.is_published !== false);
+
+      // Sort: 1. Registration Open, 2. Nearest upcoming date
+      data.sort((a, b) => {
+        const aStatus = (a.registration_status || a.status || '').toUpperCase();
+        const bStatus = (b.registration_status || b.status || '').toUpperCase();
+        
+        const aIsOpen = aStatus === 'OPEN' || aStatus === 'REGISTRATION OPEN';
+        const bIsOpen = bStatus === 'OPEN' || bStatus === 'REGISTRATION OPEN';
+
+        if (aIsOpen && !bIsOpen) return -1;
+        if (!aIsOpen && bIsOpen) return 1;
+
+        const dateA = new Date(a.date_iso || a.created_at || 0).getTime();
+        const dateB = new Date(b.date_iso || b.created_at || 0).getTime();
+        return dateA - dateB;
+      });
+
       loadedTournaments = data;
       renderTournamentCards(data);
     } else {
@@ -105,60 +125,92 @@ function renderTournamentCards(tournaments) {
   const grid = document.getElementById('tournamentsGrid');
   if (!grid) return;
 
-  grid.innerHTML = tournaments.map(t => {
-    const name = t.name || 'KarateTech Championship 2026';
-    const venue = t.venue || 'Dewan Serbaguna MBSJ, Selangor';
-    const city = t.city || 'Bandar Kinrara, Selangor';
-    const dateStr = t.date || '06/09/2026';
-    const regClose = t.registration_close || 'September 1, 2026';
-    const status = t.status || 'Open';
-    const emoji = t.poster_emoji || '🏆';
+  if (tournaments.length === 0) {
+    grid.innerHTML = '<div style="grid-column: 1 / -1; text-align: center; padding: 40px; color: #666;">No upcoming tournaments currently available.</div>';
+    return;
+  }
 
-    let buttonHtml = '';
+  grid.innerHTML = tournaments.map(t => {
+    const name = t.name || 'KarateTech Championship';
+    const venue = t.venue || 'TBA';
+    const city = t.city || '';
+    const state = t.state || '';
+    const location = city && state ? `${city}, ${state}` : (city || state || 'TBA');
+    const dateStr = t.date || 'TBA';
+    const regClose = t.registration_close || 'TBA';
+    const organizer = t.organizer || 'TBA';
     
+    // Status Logic
+    const tournamentStatus = t.status || 'Draft';
+    const regStatus = (t.registration_status || '').toUpperCase() || tournamentStatus.toUpperCase();
+    const isCompleted = tournamentStatus.toUpperCase() === 'COMPLETED';
+    
+    let buttonHtml = '';
+    let regStatusText = regStatus;
+
     if (!t.id) {
-        buttonHtml = `<button class="btn btn-red width-full" disabled style="opacity: 0.6; cursor: not-allowed;">Registration is currently unavailable.</button>`;
+        buttonHtml = `<button class="btn btn-outline width-full" disabled style="opacity: 0.6; cursor: not-allowed;">Registration is currently unavailable.</button>`;
     } else {
-        const upperStatus = status.toUpperCase();
-        if (upperStatus === 'OPEN') {
+        if (isCompleted) {
+            regStatusText = 'TOURNAMENT COMPLETED';
+            buttonHtml = `<button class="btn btn-outline width-full" disabled style="opacity: 0.6; cursor: not-allowed;">TOURNAMENT COMPLETED</button>`;
+        } else if (regStatus === 'OPEN' || regStatus === 'REGISTRATION OPEN') {
+            regStatusText = 'OPEN';
             buttonHtml = `<a href="https://karatetechhybrid.spsportdatasolution.org/registration?tournament_id=${t.id}" class="btn btn-red width-full">REGISTER NOW</a>`;
-        } else if (upperStatus === 'NOT YET OPEN') {
-            buttonHtml = `<button class="btn btn-red width-full" disabled style="opacity: 0.6; cursor: not-allowed;">REGISTRATION NOT YET OPEN</button>`;
-        } else if (upperStatus === 'CLOSED' || upperStatus === 'COMPLETED') {
-            buttonHtml = `<button class="btn btn-red width-full" disabled style="opacity: 0.6; cursor: not-allowed;">REGISTRATION CLOSED</button>`;
+        } else if (regStatus === 'NOT YET OPEN') {
+            regStatusText = 'NOT YET OPEN';
+            buttonHtml = `<button class="btn btn-outline width-full" disabled style="opacity: 0.6; cursor: not-allowed;">REGISTRATION NOT YET OPEN</button>`;
+        } else if (regStatus === 'CLOSED' || regStatus === 'REGISTRATION CLOSED') {
+            regStatusText = 'CLOSED';
+            buttonHtml = `<button class="btn btn-outline width-full" disabled style="opacity: 0.6; cursor: not-allowed;">REGISTRATION CLOSED</button>`;
         } else {
-            // Default open for any other unhandled active statuses like 'Live' or fallback
+            regStatusText = regStatus;
             buttonHtml = `<a href="https://karatetechhybrid.spsportdatasolution.org/registration?tournament_id=${t.id}" class="btn btn-red width-full">REGISTER NOW</a>`;
         }
     }
 
-    return `
-      <div class="glass-card tournament-card">
-        <div class="tournament-banner-box">
-          <span class="status-pill ${status.toLowerCase() === 'draft' ? 'status-draft' : 'status-open'}">
-            ● ${status}
-          </span>
-          <span class="tournament-emoji-badge">${emoji}</span>
-        </div>
-        <h3 style="font-size: 1.4rem; margin-bottom: 8px;">${escapeHtml(name)}</h3>
-        
-        <div class="tournament-info-list">
-          <div class="tournament-info-row">
-            <span class="info-icon">📍</span>
-            <span>${escapeHtml(venue)}</span>
-          </div>
-          <div class="tournament-info-row">
-            <span class="info-icon">📅</span>
-            <span>Date: <strong>${escapeHtml(dateStr)}</strong></span>
-          </div>
-          <div class="tournament-info-row">
-            <span class="info-icon">⏳</span>
-            <span>Registration Closes: <strong>${escapeHtml(regClose)}</strong></span>
-          </div>
-        </div>
+    const bannerImg = t.banner_url ? `<img src="${escapeHtml(t.banner_url)}" alt="Tournament Banner" style="width: 100%; height: 180px; object-fit: cover; border-radius: 8px 8px 0 0;" onerror="this.style.display='none'">` : `<div style="height: 180px; background: linear-gradient(135deg, #2a2a2a, #1a1a1a); border-radius: 8px 8px 0 0; display: flex; align-items: center; justify-content: center; font-size: 3rem;">${t.poster_emoji || '🏆'}</div>`;
+    const logoImg = t.logo_url ? `<img src="${escapeHtml(t.logo_url)}" alt="Logo" style="width: 64px; height: 64px; border-radius: 50%; border: 3px solid #1a1a1a; position: absolute; bottom: -32px; left: 24px; background: #fff;" onerror="this.style.display='none'">` : '';
 
-        <div style="margin-top: auto; padding-top: 16px;">
-          ${buttonHtml}
+    return `
+      <div class="glass-card tournament-card" style="padding: 0; display: flex; flex-direction: column;">
+        <div style="position: relative; margin-bottom: 40px;">
+          ${bannerImg}
+          ${logoImg}
+          <div style="position: absolute; top: 16px; right: 16px;">
+            <span class="status-pill status-open" style="background: rgba(0,0,0,0.7); backdrop-filter: blur(4px);">
+              ● ${escapeHtml(tournamentStatus)}
+            </span>
+          </div>
+        </div>
+        
+        <div style="padding: 0 24px 24px; flex: 1; display: flex; flex-direction: column;">
+          <h3 style="font-size: 1.3rem; margin-bottom: 4px; line-height: 1.3;">${escapeHtml(name)}</h3>
+          <div style="color: #a0a0a0; font-size: 0.9rem; margin-bottom: 16px;">Organizer: ${escapeHtml(organizer)}</div>
+          
+          <div class="tournament-info-list" style="margin-bottom: 24px;">
+            <div class="tournament-info-row">
+              <span class="info-icon">📅</span>
+              <span>Date: <strong>${escapeHtml(dateStr)}</strong></span>
+            </div>
+            <div class="tournament-info-row">
+              <span class="info-icon">📍</span>
+              <span>${escapeHtml(venue)}<br><small style="color: #888;">${escapeHtml(location)}</small></span>
+            </div>
+            <div class="tournament-info-row" style="margin-top: 8px; padding-top: 8px; border-top: 1px solid rgba(255,255,255,0.1);">
+              <span class="info-icon">📝</span>
+              <span>Registration: <strong style="color: ${regStatusText === 'OPEN' ? '#00e676' : '#ff5252'}">${escapeHtml(regStatusText)}</strong></span>
+            </div>
+            <div class="tournament-info-row">
+              <span class="info-icon">⏳</span>
+              <span>Closing: <strong>${escapeHtml(regClose)}</strong></span>
+            </div>
+          </div>
+
+          <div style="margin-top: auto; display: flex; flex-direction: column; gap: 12px;">
+            <a href="tournament.html?id=${t.id}" class="btn btn-outline width-full" style="text-align: center;">VIEW TOURNAMENT</a>
+            ${buttonHtml}
+          </div>
         </div>
       </div>
     `;
